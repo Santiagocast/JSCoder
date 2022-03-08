@@ -24,27 +24,27 @@ class Deuda {
 
 
 function ingresarGasto(){
-let personas = [];
-let nombre;
-let gasto = parseFloat(prompt("Ingrese el gasto total a ingresar"));
-let descripcion = prompt("Ingrese el concepto del gasto");
-let cantidadPersonas = parseInt(prompt("Ingrese el total de personas que compartieron el gasto incluyendo a la persona que pagó"));
-if(cantidadPersonas >1){
-    nombre = prompt("Ingrese el nombre de la persona que pagó");
-}else{
-    alert ("debe haber más de 1 persona para compartir el gasto. Vuelva a ingresar el gasto");
-    return ingresarGasto();
-}
-let idPagador = 0;
-let pagador = new Persona (nombre, idPagador);
-personas.push(pagador);
-for(let i = 1; i<cantidadPersonas; i++){
-    let nombre = prompt("Ingrese el nombre de la persona " + i + " que está en DEUDA");
-    let deudor = new Persona (nombre, i);
-    personas.push(deudor);
-}
-let deuda = new Deuda(gasto, pagador, personas, descripcion);
-return deuda;
+    let personas = [];
+    let nombre;
+    let gasto = parseFloat(prompt("Ingrese el gasto total a ingresar"));
+    let descripcion = prompt("Ingrese el concepto del gasto");
+    let cantidadPersonas = parseInt(prompt("Ingrese el total de personas que compartieron el gasto incluyendo a la persona que pagó"));
+    if(cantidadPersonas >1){
+        nombre = prompt("Ingrese el nombre de la persona que pagó");
+    }else{
+        alert ("debe haber más de 1 persona para compartir el gasto. Vuelva a ingresar el gasto");
+        return ingresarGasto();
+    }
+    let idPagador = 0;
+    let pagador = new Persona (nombre, idPagador);
+    personas.push(pagador);
+    for(let i = 1; i<cantidadPersonas; i++){
+        let nombre = prompt("Ingrese el nombre de la persona " + i + " que está en DEUDA");
+        let deudor = new Persona (nombre, i);
+        personas.push(deudor);
+    }
+    let deuda = new Deuda(gasto, pagador, personas, descripcion);
+    return deuda;
 }
 
 function imprimirDetalle(deuda, pagadoPorPersona){
@@ -113,5 +113,5 @@ function obtenerDeudoresOrdenados(deuda){
 function pagadoPorPersona(deuda){
     let pagadoPorPersona = deuda.total/deuda.cantidadPersonas;
     console.log(pagadoPorPersona);
-    return pagadoPorPersona;
+    return pagadoPorPersona.toFixed(2);
 }
