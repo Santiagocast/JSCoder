@@ -16,18 +16,16 @@ class Deuda {
     }    
 }
 
-//let deuda = ingresarGasto();
-// imprimirDetalle(deuda, pagadoPorPersona(deuda));
-
 //Abrir popup para añadir gastos.
-let boton = document.getElementById("agregarGasto")
-boton.addEventListener("click", abrirPopup)
+let botonInicial = document.getElementById("agregarGasto")
+botonInicial.addEventListener("click", abrirPopup)
 //prevenir el sumbit del form
 document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){
     event.preventDefault()
 });
+
 let añadirGasto = document.getElementById("gastoNuevoAñadir");
-let deuda = añadirGasto.addEventListener("click", gastoNuevoAñadir);
+let eventoGasto = añadirGasto.addEventListener("click", gastoNuevoAñadir);
 
 function gastoNuevoAñadir(){
     let fecha;
@@ -113,8 +111,6 @@ function pagadoPorPersona(deuda){
     return pagadoPorPersona.toFixed(2);
 }
 
-
 function abrirPopup(){
     $('#exampleModal').modal("show");
 }
-
