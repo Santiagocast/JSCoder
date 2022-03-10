@@ -1,3 +1,5 @@
+import tags from "./bootstrap5-tags-master/tags.js";
+tags.init("select[multiple]");
 class Persona{
     constructor(nombre, id) {
         this.nombre = nombre;
@@ -6,56 +8,53 @@ class Persona{
 }
 
 class Deuda {
-    constructor (total, pagador, personasIncluidasEnGasto, descripcion){
+    constructor (fecha, total, pagador, personasIncluidasEnGasto, descripcion){
+        this.fecha = fecha;
         this.total = total;
         this.pagador = pagador;
         this.personas = personasIncluidasEnGasto;
-        this.cantidadPersonas = this.personas.length;
+        this.cantidadPersonas = this.personas.length+1;
         this.descripcion = descripcion;
     }    
 }
 
-//let intentos = parseInt(prompt("Ingrese cantidad de veces que quiere probar ingresar un gasto"));
-//for ( let i = 0; i<intentos; i++){
-    let deuda = ingresarGasto();
-    imprimirDetalle(deuda, pagadoPorPersona(deuda));
-    agregarGastoATabla(deuda);
-//}
+//let deuda = ingresarGasto();
+// imprimirDetalle(deuda, pagadoPorPersona(deuda));
 
+//Abrir popup para añadir gastos.
+let boton = document.getElementById("agregarGasto")
+boton.addEventListener("click", abrirPopup)
+//prevenir el sumbit del form
+document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){
+    event.preventDefault()
+});
+let añadirGasto = document.getElementById("gastoNuevoAñadir");
+let deuda = añadirGasto.addEventListener("click", gastoNuevoAñadir);
 
-function ingresarGasto(){
-    let personas = [];
-    let nombre;
-    let gasto = parseFloat(prompt("Ingrese el gasto total a ingresar"));
-    let descripcion = prompt("Ingrese el concepto del gasto");
-    let cantidadPersonas = parseInt(prompt("Ingrese el total de personas que compartieron el gasto incluyendo a la persona que pagó"));
-    if(cantidadPersonas >1){
-        nombre = prompt("Ingrese el nombre de la persona que pagó");
-    }else{
-        alert ("debe haber más de 1 persona para compartir el gasto. Vuelva a ingresar el gasto");
-        return ingresarGasto();
+function gastoNuevoAñadir(){
+    let fecha;
+    let monto;
+    let descripcion;
+    let pagador;
+    let deudores = [];
+    fecha = document.getElementById("fecha").value;
+    monto = parseFloat(document.getElementById("monto").value);
+    descripcion = document.getElementById("descripcion").value;
+    pagador = document.getElementById("pagador").value;
+    let opciones = document.getElementById("deudores");
+    for(const d of opciones){
+        let deudor = new Persona (d.value, 1);
+        deudores.push(deudor); 
     }
     let idPagador = 0;
-    let pagador = new Persona (nombre, idPagador);
-    personas.push(pagador);
-    for(let i = 1; i<cantidadPersonas; i++){
-        let nombre = prompt("Ingrese el nombre de la persona " + i + " que está en DEUDA");
-        let deudor = new Persona (nombre, i);
-        personas.push(deudor);
-    }
-    let deuda = new Deuda(gasto, pagador, personas, descripcion);
-    return deuda;
-}
-
-function imprimirDetalle(deuda, pagadoPorPersona){
-    let nombreDeudores =  obtenerDeudoresOrdenados(deuda);
-    alert ("Se gastó un total de $" + 
-    deuda.total + " y " + 
-    nombreDeudores + " deben en concepto de "+
-    deuda.descripcion +  " al usuario " +
-    deuda.pagador.nombre +  " un total de $" + 
-    pagadoPorPersona * (deuda.personas.length -1) + " pagando un total de $" + 
-    pagadoPorPersona + " cada uno.");
+    let pagadorFinal = new Persona (pagador, idPagador);
+    let deuda = new Deuda(fecha, monto, pagadorFinal, deudores, descripcion);
+    agregarGastoATabla(deuda);
+    let form = document.getElementById("gastoNuevo");
+    //Reseteo y escondo el form
+    form.reset();
+    $('#exampleModal').modal('hide')
+    //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
 }
 
 function agregarGastoATabla(gasto){
@@ -70,7 +69,7 @@ function agregarGastoATabla(gasto){
     let gastoPorPersona;
     tabla = document.getElementById("tablaGastos");
     //inserto una fila a la tabla
-    filaAgregada = tabla.insertRow();
+    let filaAgregada = tabla.insertRow();
     //inserto las celdas de las filas
     fecha = filaAgregada.insertCell(0);
     descripcion = filaAgregada.insertCell(1);
@@ -81,15 +80,15 @@ function agregarGastoATabla(gasto){
     saldoAFavor = filaAgregada.insertCell(6);
     filaAgregada.insertCell(7);
     // Pongo los datos de la deuda en las celdas.
-    var f = new Date();
     gastoPorPersona = pagadoPorPersona(gasto);
-    fecha.innerText = f.getDate() + "/"+ f.getMonth()+ "/" +f.getFullYear();
+    var f = new Date();
+    fecha.innerText = gasto.fecha;
     descripcion.innerText = gasto.descripcion;
-    precio.innerText = "$" + gasto.total;
+    precio.innerText = "$" + gasto.total.toFixed(2);
     pagadoPor.innerText = gasto.pagador.nombre;
     deudores.innerText =  obtenerDeudoresOrdenados(gasto);
     deuda.innerText = "$" + gastoPorPersona;
-    saldoAFavor.innerText = "$" +  gastoPorPersona * (gasto.personas.length -1); 
+    saldoAFavor.innerText = "$" +  (gastoPorPersona * (gasto.personas.length)).toFixed(2); 
 }
 
 function obtenerDeudoresOrdenados(deuda){
@@ -115,3 +114,9 @@ function pagadoPorPersona(deuda){
     console.log(pagadoPorPersona);
     return pagadoPorPersona.toFixed(2);
 }
+
+
+function abrirPopup(){
+    $('#exampleModal').modal("show");
+}
+
