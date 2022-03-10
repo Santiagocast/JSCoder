@@ -18,7 +18,10 @@ class Deuda {
 
 //Abrir popup para añadir gastos.
 let botonInicial = document.getElementById("agregarGasto")
-botonInicial.addEventListener("click", abrirPopup)
+botonInicial.addEventListener("click", abrirPopup);
+let btnCancelar = document.getElementById("cancelarGasto")
+btnCancelar.addEventListener("click", cerrarPopup);
+
 //prevenir el sumbit del form
 document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){
     event.preventDefault()
@@ -116,4 +119,8 @@ function pagadoPorPersona(deuda){
 
 function abrirPopup(){
     $('#exampleModal').modal("show");
+}
+
+function cerrarPopup(){
+    $('#exampleModal').modal("hide");
 }
