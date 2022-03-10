@@ -92,7 +92,7 @@ function agregarGastoATabla(gasto){
 
 function obtenerDeudoresOrdenados(deuda){
     //let deudores = deuda.personas.filter(d => d.id != 0); //Filtro las que no tiene el id pagador = 0; innecesario, ahora llegan los deudores solos, sin el pagador
-    deudores.sort((d1,d2)=> {  //ordeno el array alfabeticamente
+    let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
         if (d1.nombre >d2.nombre){
             return 1;
         }
