@@ -1,5 +1,3 @@
-import tags from "./bootstrap5-tags-master/tags.js";
-tags.init("select[multiple]");
 class Persona{
     constructor(nombre, id) {
         this.nombre = nombre;
