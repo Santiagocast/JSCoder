@@ -39,10 +39,12 @@ function gastoNuevoAñadir(){
     pagador = document.getElementById("pagador").value;
     let opciones = document.getElementById("deudores");
     for(const d of opciones){
+        let i = 1;
         if (d.selected){
-            let deudor = new Persona (d.value, 1);
+            let deudor = new Persona (d.value, i);
             deudores.push(deudor); 
         }
+        i++;
     }
     let idPagador = 0;
     let pagadorFinal = new Persona (pagador, idPagador);
@@ -89,7 +91,7 @@ function agregarGastoATabla(gasto){
 }
 
 function obtenerDeudoresOrdenados(deuda){
-    let deudores = deuda.personas.filter(d => d.id != 0); //Filtro las que no tiene el id pagador = 0;
+    //let deudores = deuda.personas.filter(d => d.id != 0); //Filtro las que no tiene el id pagador = 0; innecesario, ahora llegan los deudores solos, sin el pagador
     deudores.sort((d1,d2)=> {  //ordeno el array alfabeticamente
         if (d1.nombre >d2.nombre){
             return 1;
