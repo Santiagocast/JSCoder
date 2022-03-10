@@ -39,8 +39,10 @@ function gastoNuevoAñadir(){
     pagador = document.getElementById("pagador").value;
     let opciones = document.getElementById("deudores");
     for(const d of opciones){
-        let deudor = new Persona (d.value, 1);
-        deudores.push(deudor); 
+        if (d.selected){
+            let deudor = new Persona (d.value, 1);
+            deudores.push(deudor); 
+        }
     }
     let idPagador = 0;
     let pagadorFinal = new Persona (pagador, idPagador);
@@ -77,7 +79,6 @@ function agregarGastoATabla(gasto){
     filaAgregada.insertCell(7);
     // Pongo los datos de la deuda en las celdas.
     gastoPorPersona = pagadoPorPersona(gasto);
-    var f = new Date();
     fecha.innerText = gasto.fecha;
     descripcion.innerText = gasto.descripcion;
     precio.innerText = "$" + gasto.total.toFixed(2);
