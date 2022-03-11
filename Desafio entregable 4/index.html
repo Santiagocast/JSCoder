@@ -131,18 +131,23 @@
                       <input type="number" class="form-control" id="monto" aria-describedby="emailHelp" placeholder="Ingrese monto">
                       <label for="descripcion">Ingrese descripcion</label>
                       <input type="text" class="form-control" id="descripcion" aria-describedby="inputGroup-sizing-sm" placeholder="Descripción" >
-                      <label for="pagador">Seleccione o escriba nombre de usauario pagador</label>
-                      <input type="text" list="items" class="form-control" placeholder="nombre de usauario" id="pagador"/>
-                        <datalist id="items">
-                          <option >Manuel</option>
-                          <option >Facundo</option>
-                          <option >Leo</option>
-                          <option >Flor</option>
-                          <option >Marina</option>
-                        </datalist>
-                      <label for="deudores" class="form-label">Escriba los nombres de los usuarios deudores (separados por coma o enter)</label>
-                      <select class="form-select" id="deudores" name="tags_separator[]" multiple data-allow-new="true" data-separator=" |,|  ">
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="pagadoPorMi">
+                        <label class="form-check-label" for="pagadoPorMi">Pagado por mi</label>
+                      </div>
+                      <label for="pagador" class="form-label">Pagado por</label>
+                      <select class="form-select" id="pagador" name="tags_single" data-allow-clear="1" data-suggestions-threshold="0">
+                        <option disabled hidden value="">Elija a la persona que pagó</option>
+                        <option value="1">Apple</option>
+                        <option value="2">Banana</option>
+                      </select>                      
+                      <label for="deudores" class="form-label">Seleccione los deudores</label>
+                      <select class="form-select" id="deudores" name="tags_separator[]" data-suggestions-threshold="0" data-allow-clear="1" multiple data-separator=" |,|  ">
+                        <option value="1">Apple</option>
+                        <option value="2">Banana</option>
+                        <option value="3">Orange</option>
                       </select>
+                      <div class="invalid-feedback">Selecciones una opción válida</div>
                     </div>
                   </form>
                 </div>

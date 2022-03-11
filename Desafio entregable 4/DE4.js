@@ -5,7 +5,6 @@ class Persona{
         this.id = id;
     }
 }
-
 class Deuda {
     constructor (fecha, total, pagador, personasIncluidasEnGasto, descripcion){
         this.fecha = fecha;
@@ -16,7 +15,6 @@ class Deuda {
         this.descripcion = descripcion;
     }    
 }
-
 class Grupo {
     constructor(nombre, descripcion, usuarioPrincipal, integrantes){
         this.nombre = nombre;
@@ -29,7 +27,10 @@ class Grupo {
 let usuarioPrincipal = localStorage.getItem("0");
 if (usuarioPrincipal == null){
     popup("#popupUserPrincipal", "show");
+}else{
+    iniciar();
 }
+
 //Usuario principal
 document.getElementById("añadirUserPrincipal").addEventListener("click", validarUserPrincipal);
 //Eventos para añadir los gastos.
@@ -46,9 +47,24 @@ document.getElementById("cancelarGrupo").addEventListener("click", () =>{popup("
 document.getElementById("cerrarPopupGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
 document.getElementById("agregarGrupo").addEventListener("click", ()=> {popup("#popupNuevoGrupo","show");});
 document.getElementById("añadirGrupo").addEventListener("click", agregarGrupo);
+document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 
 
 //Funciones
+function iniciar(){
+    for (let i = 0; i< localStorage.length; i++){
+        if(/^Grupo/.test(localStorage.key(i))){
+            //Recuperar el grupo   
+        }
+    } 
+    usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
+    let opcionesForms = document.getElementById("pagador");
+    let opcion0 = document.createElement('option');
+    opcion0.text = usuarioPrincipal.nombre;
+    opcion0.value = 0;
+    opcionesForms.appendChild(opcion0);
+}
+
 function gastoNuevoAñadir(){
     let fecha;
     let monto;
@@ -161,6 +177,15 @@ function agregarGrupo(){
     document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
     document.getElementById("grupoNuevo").reset();
     popup("#popupNuevoGrupo", "hide");
+    let flag = false;
+    for(let i= 0 ; i<localStorage.length; i++){
+        if( `Grupo ${nombre}` == localStorage.key(i)){
+            flag = true;
+        }
+    }
+    if(flag){
+        localStorage.setItem(`Grupo ${nombre}`,grupo);
+    }
 }
 
 function validarUserPrincipal(){
@@ -172,7 +197,16 @@ function validarUserPrincipal(){
     else{
         usuario = document.getElementById("userPrincipal").value;
         usuarioPrincipal = new Persona(usuario, 0);
-        localStorage.setItem(usuarioPrincipal.id, usuarioPrincipal)
-        popup("#popupUserPrincipal", "hide")
+        localStorage.setItem(usuarioPrincipal.id, JSON.stringify(usuarioPrincipal))
+        popup("#popupUserPrincipal", "hide");
+        iniciar();
     }
+}
+
+function validarCheck(){
+    if(document.getElementById("pagadoPorMi").checked){
+        document.getElementById("pagador").readOnly = true;
+        document.getElementById("pagador").options.selectedIndex = 0;
+    }
+
 }
