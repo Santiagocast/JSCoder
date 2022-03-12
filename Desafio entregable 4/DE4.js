@@ -1,3 +1,6 @@
+ import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
+    Tags.init("select[multiples]");
+
 //Clases
 class Persona{
     constructor(nombre, id) {
@@ -23,8 +26,10 @@ class Grupo {
         this.integrantes = integrantes;
     }
 }
+
+let usuarioPrincipal; //Var global
 //Si encuentra el nombre del usuario principal
-let usuarioPrincipal = localStorage.getItem("0");
+usuarioPrincipal = localStorage.getItem("0");
 if (usuarioPrincipal == null){
     popup("#popupUserPrincipal", "show");
 }else{
@@ -51,21 +56,31 @@ document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 
 
 //Funciones
-function iniciar(){
+function iniciar(){ // AÑADIR COSAS NUEVAS AL SELECT
     for (let i = 0; i< localStorage.length; i++){
         if(/^Grupo/.test(localStorage.key(i))){
             //Recuperar el grupo   
         }
     } 
+    prepararOpcionesForms();
+}
+
+function prepararOpcionesForms(){
+    let opcionesPagador = document.getElementById("pagador");
     usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
-    let opcionesForms = document.getElementById("pagador");
-    let opcion0 = document.createElement('option');
-    opcion0.text = usuarioPrincipal.nombre;
-    opcion0.value = 0;
-    opcionesForms.appendChild(opcion0);
+    let opciones = []; //Agregar todos los integrantes del grupo
+    opciones.push(usuarioPrincipal);
+    for (const personas of opciones) {
+        let opcion = document.createElement("option");
+        opcion.text = personas.nombre;
+        opcionesPagador.appendChild(opcion)
+    }
 }
 
 function gastoNuevoAñadir(){
+    if(!hayGrupo()){ //Si no hay grupos crear grupo
+        crearGrupo()
+    }
     let fecha;
     let monto;
     let descripcion;
@@ -92,6 +107,14 @@ function gastoNuevoAñadir(){
     document.getElementById("gastoNuevo").reset();
     popup("#exampleModal", "hide");
     //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
+}
+
+function hayGrupo(){
+
+}
+
+function crearGrupo(){
+
 }
 
 function agregarGastoATabla(gasto){
@@ -157,12 +180,13 @@ function popup(id, accion){
 function agregarGrupo(){
     let lugarAgregar = document.getElementById("gruposNuevitos");
     let listaNueva = document.createElement("li");
-    let usuarioPrincipal = localStorage.getItem("0");
     let nombre = document.getElementById("nombreGrupo").value;
     let descripcion = document.getElementById("descripcionGrupo").value;
     let integrantes = document.getElementById("integrantes");
     let integrantesFinales = [];
     let nombreIntegrantesFinales = [];
+    integrantesFinales.push(usuarioPrincipal);
+    nombreIntegrantesFinales.push(usuarioPrincipal.nombre);
     for (const integrante of integrantes) {
         let i = 1;
         if (integrante.selected){
@@ -189,15 +213,15 @@ function agregarGrupo(){
 }
 
 function validarUserPrincipal(){
-    let usuarioPrincipal;
+    let user;
     let usuario = document.getElementById("userPrincipal").value;
     if(usuario.localeCompare("") ==0){
         alert("Ingrese nombres válido");
     }
     else{
         usuario = document.getElementById("userPrincipal").value;
-        usuarioPrincipal = new Persona(usuario, 0);
-        localStorage.setItem(usuarioPrincipal.id, JSON.stringify(usuarioPrincipal))
+        user = new Persona(usuario, 0);
+        localStorage.setItem(user.id, JSON.stringify(user))
         popup("#popupUserPrincipal", "hide");
         iniciar();
     }
@@ -205,7 +229,7 @@ function validarUserPrincipal(){
 
 function validarCheck(){
     if(document.getElementById("pagadoPorMi").checked){
-        document.getElementById("pagador").readOnly = true;
+        document.getElementById("pagador").disabled = true;
         document.getElementById("pagador").options.selectedIndex = 0;
     }
 
