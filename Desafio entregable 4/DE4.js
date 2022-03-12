@@ -27,8 +27,9 @@ class Grupo {
 }
 
 let usuarioPrincipal; //Var global
+let grupos = [];
 //Si encuentra el nombre del usuario principal
-usuarioPrincipal = localStorage.getItem("0");
+usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
 if (usuarioPrincipal == null){
     popup("#popupUserPrincipal", "show");
 }else{
@@ -38,7 +39,7 @@ if (usuarioPrincipal == null){
 //Usuario principal
 document.getElementById("añadirUserPrincipal").addEventListener("click", validarUserPrincipal);
 //Eventos para añadir los gastos.
-document.getElementById("agregarGasto").addEventListener("click", () =>{popup("#exampleModal", "show")});
+document.getElementById("agregarGasto").addEventListener("click", validarGasto);
 document.getElementById("cancelarGasto").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevoAñadir").addEventListener("click", gastoNuevoAñadir);
 document.getElementById("cerrarPopup").addEventListener("click", () =>{popup("#exampleModal", "hide")});
@@ -55,31 +56,27 @@ document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 
 
 //Funciones
-function iniciar(){ // AÑADIR COSAS NUEVAS AL SELECT
-    for (let i = 0; i< localStorage.length; i++){
-        if(/^Grupo/.test(localStorage.key(i))){
-            //Recuperar el grupo   
-        }
-    } 
-    prepararOpcionesForms();
+function iniciar(){
+    //Ver como recuperar grupo, por el momento crear uno nuevo 
+    // for (let i = 0; i< localStorage.length; i++){
+    //     if(/^Grupo/.test(localStorage.key(i))){
+    //         //Recuperar el grupo   
+    //     }
+    // } 
 }
 
 function prepararOpcionesForms(){
     let opcionesPagador = document.getElementById("pagador");
-    usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
-    let opciones = []; //Agregar todos los integrantes del grupo
-    opciones.push(usuarioPrincipal);
-    for (const personas of opciones) {
+    //Agregar todos los integrantes del grupo
+    //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
+    for (const integrantes of grupos[0].integrantes) {
         let opcion = document.createElement("option");
-        opcion.text = personas.nombre;
+        opcion.text = integrantes.nombre;
         opcionesPagador.appendChild(opcion)
     }
-}
+ }
 
 function gastoNuevoAñadir(){
-    if(!hayGrupo()){ //Si no hay grupos crear grupo
-        crearGrupo()
-    }
     let fecha;
     let monto;
     let descripcion;
@@ -108,12 +105,8 @@ function gastoNuevoAñadir(){
     //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
 }
 
-function hayGrupo(){
-
-}
-
-function crearGrupo(){
-
+function noHayGrupo(){ //Habria que Validar correctamente
+    return document.getElementById("detGrupo").innerText == "Detalles del grupo";
 }
 
 function agregarGastoATabla(gasto){
@@ -210,6 +203,7 @@ function agregarGrupo(){
     if(!existe){
         localStorage.setItem(`Grupo ${nombre}`,JSON.stringify(grupo));
     }
+    grupos.push(grupo);
 }
 
 function validarUserPrincipal(){
@@ -231,6 +225,22 @@ function validarCheck(){
     if(document.getElementById("pagadoPorMi").checked){
         document.getElementById("pagador").disabled = true;
         document.getElementById("pagador").options.selectedIndex = 0;
+    }else{
+        document.getElementById("pagador").disabled = false;
     }
+
+}
+
+function validarGasto(){
+    if(noHayGrupo()){ //Si no hay grupos crear grupo
+        alert("Antes debe agregar un grupo")
+        popup("#popupNuevoGrupo", "show")
+    }else{
+        if(document.getElementById("pagador").options.length != grupos[0].integrantes.length){
+            prepararOpcionesForms();
+        }
+        popup("#exampleModal", "show")
+    }
+    
 
 }
