@@ -232,7 +232,8 @@ function agregarGrupo(){
     let grupo = new Grupo(nombre,descripcion,integrantesFinales);
     document.getElementById("grupoNuevo").reset();
     popup("#popupNuevoGrupo", "hide");
-    localStorage.setItem(`Grupo ${nombre}`,JSON.stringify(grupo));
+    let key  = validarStorageGrupo(grupo);
+    localStorage.setItem(key,JSON.stringify(grupo));
     grupos.push(grupo);
     limpiarTabla();
     actualizarDetallesGrupo(grupos[grupos.length-1]);
@@ -301,6 +302,16 @@ function validarOpciones(){
         checkActual.disabled = false
     }
     check.disabled = true;
+}
+
+function validarStorageGrupo(grupo){
+    let key = "Grupo " + grupo.nombre;
+    for (let i = 0; i< localStorage.length; i++){
+        if("Grupo " + grupo.nombre == localStorage.key(i)){
+            key = "Grupo " + grupo.nombre +" (1)"
+        }
+    }
+    return key;
 }
 
 function prepararOpcionesForms(){
