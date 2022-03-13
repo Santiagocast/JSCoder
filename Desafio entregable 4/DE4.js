@@ -1,6 +1,11 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
+//TODO: Al agregar nuevos grupos limpiar tabla
+//TODO: Cambiar de grupos y cambiar tablas
+//TODO: Actualizar los totales de las tarjetas
+//TODO: Ver como busco al grupo actual de los almacenados.
+
 //Clases
 class Persona{
     constructor(nombre, id) {
@@ -23,6 +28,7 @@ class Grupo {
         this.nombre = nombre;
         this.descripcion= descripcion;
         this.integrantes = integrantes;
+        this.deudas = [];
     }
 }
 
@@ -53,6 +59,7 @@ document.getElementById("cerrarPopupGrupo").addEventListener("click", () =>{popu
 document.getElementById("agregarGrupo").addEventListener("click", ()=> {popup("#popupNuevoGrupo","show");});
 document.getElementById("añadirGrupo").addEventListener("click", agregarGrupo);
 document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
+document.getElementById("pagador").addEventListener("change", validarOpciones);
 
 
 //Funciones
@@ -81,17 +88,20 @@ function gastoNuevoAñadir(){
         let ch = document.getElementById("ch"+i);
         let deudor;
         if (ch.checked){
-            deudor = grupos[0].integrantes[i];
+            deudor = grupos[0].integrantes[i];                              //Deberia verificar grupo y asignarselo
             deudores.push(deudor); 
         }
     }
-    pagador = grupos[0].integrantes[pagador.selectedIndex];
+    pagador = grupos[0].integrantes[pagador.selectedIndex];                 //Deberia verificar grupo y asignarselo
     let deuda = new Deuda(fecha, monto, pagador, deudores, descripcion);
     agregarGastoATabla(deuda);
     //Reseteo y escondo el form
     document.getElementById("gastoNuevo").reset();
     popup("#exampleModal", "hide");
     //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
+    //Agregar gasto al grupo
+    grupos[0].deudas.push(deuda);                                           //Deberia verificar grupo y asignarselo
+    console.log(grupos[0].deudas);
 }
 
 function noHayGrupo(){ //Habria que Validar correctamente
@@ -206,6 +216,7 @@ function validarUserPrincipal(){
         user = new Persona(usuario, 0);
         localStorage.setItem(user.id, JSON.stringify(user))
         popup("#popupUserPrincipal", "hide");
+        usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
         iniciar();
     }
 }
@@ -225,11 +236,23 @@ function validarGasto(){
         alert("Antes debe agregar un grupo")
         popup("#popupNuevoGrupo", "show")
     }else{
-        if(document.getElementById("pagador").options.length != grupos[0].integrantes.length){
+        if(document.getElementById("pagador").options.length != grupos[0].integrantes.length){  //Deberia verificar grupo y asignarselo
             prepararOpcionesForms();
         }
-        popup("#exampleModal", "show")
+        popup("#exampleModal", "show");
+        validarOpciones();
     }
+}
+
+function validarOpciones(){
+    let checks = document.getElementById("checkDeudores").children.length;
+    let opcionElegida = document.getElementById("pagador").selectedIndex;
+    let check = document.getElementById("ch" + opcionElegida);
+    for(let i = 0; i<checks; i++){
+        let checkActual = document.getElementById("ch" + i);
+        checkActual.disabled = false
+    }
+    check.disabled = true;
 }
 
 function prepararOpcionesForms(){
@@ -238,7 +261,7 @@ function prepararOpcionesForms(){
     let i = 0;
     //Agregar todos los integrantes del grupo
     //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
-    for (const integrantes of grupos[0].integrantes) {
+    for (const integrantes of grupos[0].integrantes) {                                      //Deberia verificar grupo y asignarselo
         //Select
         let opcion = document.createElement("option");
         opcion.text = integrantes.nombre;
