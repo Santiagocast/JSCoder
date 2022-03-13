@@ -63,13 +63,14 @@ document.getElementById("pagador").addEventListener("change", validarOpciones);
 
 
 //Funciones
-function iniciar(){
-    //Ver como recuperar grupo, por el momento crear uno nuevo 
-    // for (let i = 0; i< localStorage.length; i++){
-    //     if(/^Grupo/.test(localStorage.key(i))){
-    //         //Recuperar el grupo   
-    //     }
-    // } 
+function iniciar(){ 
+    //Traigo los grupos
+    for (let i = 0; i< localStorage.length; i++){
+        if(/^Grupo/.test(localStorage.key(i))){
+            let grupoActual = JSON.parse(localStorage.getItem(localStorage.key(i)))
+            grupos.push(grupoActual);
+        }
+    }
 }
 
 function gastoNuevoAñadir(){
@@ -100,8 +101,7 @@ function gastoNuevoAñadir(){
     popup("#exampleModal", "hide");
     //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
     //Agregar gasto al grupo
-    grupos[0].deudas.push(deuda);                                           //Deberia verificar grupo y asignarselo
-    console.log(grupos[0].deudas);
+    grupos[0].deudas.push(deuda); 
 }
 
 function noHayGrupo(){ //Habria que Validar correctamente
@@ -193,15 +193,7 @@ function agregarGrupo(){
     document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
     document.getElementById("grupoNuevo").reset();
     popup("#popupNuevoGrupo", "hide");
-    let existe = false;
-    for(let i= 0 ; i<localStorage.length; i++){
-        if( `Grupo ${nombre}` == localStorage.key(i)){
-            existe = true;
-        }
-    }
-    if(!existe){
-        localStorage.setItem(`Grupo ${nombre}`,JSON.stringify(grupo));
-    }
+    localStorage.setItem(`Grupo ${nombre}`,JSON.stringify(grupo));
     grupos.push(grupo);
 }
 
