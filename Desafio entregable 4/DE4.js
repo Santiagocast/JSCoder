@@ -1,11 +1,11 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Cambiar de grupos y cambiar tablas y todos los datos correspondientes al grupo
-//TODO: Actualizar grupos en el storage al crear un nuevo gasto y ponerle la deuda a ese grupo.
+//TODO: Cambiar de grupos y cambiar tablas y todos los datos correspondientes al grupo actual seleccionado
+//TODO: Obtener grupo para agregar gasto o eliminar
 //TODO: Actualizar los totales de las tarjetas
-//TODO: Boton para borrar grupos
-//TODO: Boton para eliminar un gasto especifico. 
+//TODO: Boton para borrar grupos 
+//TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo (En un futuro)
 
 //Clases
 class Persona{
@@ -116,10 +116,11 @@ function gastoNuevoAñadir(){
     //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
     //Agregar gasto al grupo
     grupos[0].deudas.push(deuda);                                           //Verificar grupo correspondiente
+    actualizarGrupo(0); //Actualizo en el storage el grupo por ahora siempre el primero
 }
 
 function noHayGrupo(){
-    return grupos == null;
+    return grupos.length == 0;
 }
 
 function agregarGastoATabla(gasto){
@@ -162,14 +163,19 @@ function agregarGastoATabla(gasto){
     //Agregar gastos al grupo correspondiente
 }
 
+function actualizarGrupo(indiceGrupo){
+    localStorage.setItem(`Grupo ${grupos[indiceGrupo].nombre}`, JSON.stringify(grupos[indiceGrupo]));
+}
+
 function eliminarGastos(){
     let movimientos = document.getElementById("movimientos");
     for(let i = 0 ; i< movimientos.children.length;i ++){
         if(movimientos.children[i].cells[7].children[0].checked){
             movimientos.removeChild(movimientos.children[i]);
+            grupos[0].deudas.splice(i,1);
         }
     }
-    //Eliminar gastos del grupo y actualizar en localstorage
+    actualizarGrupo(0); //Actualizo en el storage el grupo por ahora siempre el primero
 }
 function obtenerDeudoresOrdenados(deuda){
     let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
@@ -205,6 +211,10 @@ function recuperarGrupos(grupo){
     let integrantes = grupo.integrantes;
     listaNueva.innerHTML =`<a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${grupo.nombre}</a>`;
     lugarAgregar.append(listaNueva);
+}
+
+function recuperarGastosGrupo(){
+    
 }
 
 function agregarGrupo(){
