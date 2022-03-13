@@ -75,7 +75,8 @@ function iniciar(){
         if(/^Grupo/.test(localStorage.key(i))){
             let grupoActual = JSON.parse(localStorage.getItem(localStorage.key(i)))
             grupos.push(grupoActual);
-            recuperarGrupos(grupoActual); //Agrego los grupos al menú
+            recuperarGastosGrupo(grupos.length-1); // Recupera el ultimo grupo por el momento
+            actualizarDetallesGrupo(grupos[grupos.length-1]);
         }
     }
 }
@@ -204,22 +205,15 @@ function popup(id, accion){
     $(id).modal(accion);
 }
 
-function recuperarGrupos(grupo){
-    let lugarAgregar = document.getElementById("gruposNuevitos");
-    let listaNueva = document.createElement("li");
-    let descripcion = grupo.descripcion;
-    let integrantes = grupo.integrantes;
-    listaNueva.innerHTML =`<a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${grupo.nombre}</a>`;
-    lugarAgregar.append(listaNueva);
-}
-
-function recuperarGastosGrupo(){
-    
+function recuperarGastosGrupo(indiceGrupo){
+    //Limpio la tabla
+    limpiarTabla();
+    for (const d of grupos[indiceGrupo].deudas) {
+        agregarGastoATabla(d);
+    }
 }
 
 function agregarGrupo(){
-    let lugarAgregar = document.getElementById("gruposNuevitos");
-    let listaNueva = document.createElement("li");
     let nombre = document.getElementById("nombreGrupo").value;
     let descripcion = document.getElementById("descripcionGrupo").value;
     let integrantes = document.getElementById("integrantes");
@@ -236,15 +230,28 @@ function agregarGrupo(){
         i++;
     }
     let grupo = new Grupo(nombre,descripcion,integrantesFinales);
-    listaNueva.innerHTML =`<a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${grupo.nombre}</a>`;
-    lugarAgregar.append(listaNueva);
-    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${nombre} </h3> `;
-    document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
     document.getElementById("grupoNuevo").reset();
     popup("#popupNuevoGrupo", "hide");
     localStorage.setItem(`Grupo ${nombre}`,JSON.stringify(grupo));
     grupos.push(grupo);
     limpiarTabla();
+    actualizarDetallesGrupo(grupos[grupos.length-1]);
+        
+}
+
+function actualizarDetallesGrupo(grupo){
+    let nombre = grupo.nombre;
+    let nombreIntegrantesFinales = [];
+    for (const i of grupo.integrantes) {
+        nombreIntegrantesFinales.push(i.nombre);        
+    }
+    let lugarAgregar = document.getElementById("gruposNuevitos");
+    let listaNueva = document.createElement("li");
+    listaNueva.innerHTML =`<a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${grupo.nombre}</a>`;
+    lugarAgregar.append(listaNueva);
+    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${nombre} </h3> `;
+    document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
+    
 }
 
 function validarUserPrincipal(){
