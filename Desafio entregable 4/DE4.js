@@ -65,17 +65,6 @@ function iniciar(){
     // } 
 }
 
-function prepararOpcionesForms(){
-    let opcionesPagador = document.getElementById("pagador");
-    //Agregar todos los integrantes del grupo
-    //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
-    for (const integrantes of grupos[0].integrantes) {
-        let opcion = document.createElement("option");
-        opcion.text = integrantes.nombre;
-        opcionesPagador.appendChild(opcion)
-    }
- }
-
 function gastoNuevoAñadir(){
     let fecha;
     let monto;
@@ -241,6 +230,32 @@ function validarGasto(){
         }
         popup("#exampleModal", "show")
     }
-    
-
 }
+
+
+function prepararOpcionesForms(){
+    let opcionesPagador = document.getElementById("pagador");
+    let opcionesDeudor = document.getElementById("checkDeudores");
+    let i = 0;
+    //Agregar todos los integrantes del grupo
+    //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
+    for (const integrantes of grupos[0].integrantes) {
+        //Select
+        let opcion = document.createElement("option");
+        opcion.text = integrantes.nombre;
+        opcionesPagador.appendChild(opcion)
+        //Checks
+        let check = document.createElement("input");
+        let label = document.createElement("label");
+        check.type = "checkbox";
+        check.id = "ch" + i;
+        check.className = "form-check-input";
+        label.className = "form-check-label";
+        label.htmlFor = "ch" + i;
+        label.innerText = integrantes.nombre;
+        opcionesDeudor.append(check);
+        opcionesDeudor.append(label);
+        i++;
+    }
+    //TODO preparar opciones check
+ }
