@@ -74,19 +74,19 @@ function gastoNuevoAñadir(){
     fecha = document.getElementById("fecha").value;
     monto = parseFloat(document.getElementById("monto").value);
     descripcion = document.getElementById("descripcion").value;
-    pagador = document.getElementById("pagador").value;
-    let opciones = document.getElementById("deudores");
-    for(const d of opciones){
-        let i = 1;
-        if (d.selected){
-            let deudor = new Persona (d.value, i);
+    pagador = document.getElementById("pagador");
+    let opciones = document.getElementById("checkDeudores");
+    let cantidadChecks = opciones.children.length;
+    for(let i = 0; i<cantidadChecks; i++){
+        let ch = document.getElementById("ch"+i);
+        let deudor;
+        if (ch.checked){
+            deudor = grupos[0].integrantes[i];
             deudores.push(deudor); 
         }
-        i++;
     }
-    let idPagador = 0;
-    let pagadorFinal = new Persona (pagador, idPagador);
-    let deuda = new Deuda(fecha, monto, pagadorFinal, deudores, descripcion);
+    pagador = grupos[0].integrantes[pagador.selectedIndex];
+    let deuda = new Deuda(fecha, monto, pagador, deudores, descripcion);
     agregarGastoATabla(deuda);
     //Reseteo y escondo el form
     document.getElementById("gastoNuevo").reset();
@@ -232,7 +232,6 @@ function validarGasto(){
     }
 }
 
-
 function prepararOpcionesForms(){
     let opcionesPagador = document.getElementById("pagador");
     let opcionesDeudor = document.getElementById("checkDeudores");
@@ -261,5 +260,4 @@ function prepararOpcionesForms(){
         opcionesDeudor.append(div);
         i++;
     }
-    //TODO preparar opciones check
  }
