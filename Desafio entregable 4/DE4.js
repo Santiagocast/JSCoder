@@ -1,12 +1,11 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Cambiar de grupos y cambiar tablas y todos los datos además del título
-//TODO: Actualizar grupos al crear un nuevo gasto y ponerle la deuda a ese grupo.
-//TODO: Ver como busco al grupo actual de los almacenados.
+//TODO: Cambiar de grupos y cambiar tablas y todos los datos correspondientes al grupo
+//TODO: Actualizar grupos en el storage al crear un nuevo gasto y ponerle la deuda a ese grupo.
 //TODO: Actualizar los totales de las tarjetas
 //TODO: Boton para borrar grupos
-//TODO: Boton para eliminar un gasto especifico.
+//TODO: Boton para eliminar un gasto especifico. 
 
 //Clases
 class Persona{
@@ -34,47 +33,51 @@ class Grupo {
     }
 }
 
-let usuarioPrincipal; //Var global
+//Variables globales
+let usuarioPrincipal; 
 let grupos = [];
+
 //Si encuentra el nombre del usuario principal
-usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
-if (usuarioPrincipal == null){
+usuarioPrincipal = localStorage.getItem("0");
+if (usuarioPrincipal == null){ //Debería ser la primera vez que abre
+    //Por las dudas limpiar storage
+    localStorage.clear();
     popup("#popupUserPrincipal", "show");
-}else{
+}else{ //puede haber grupos
     iniciar();
 }
 
-//Usuario principal
+//Eventos
+    //Usuario principal
 document.getElementById("añadirUserPrincipal").addEventListener("click", validarUserPrincipal);
-//Eventos para añadir los gastos.
+    //Eventos para añadir los gastos.
 document.getElementById("agregarGasto").addEventListener("click", validarGasto);
 document.getElementById("cancelarGasto").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevoAñadir").addEventListener("click", gastoNuevoAñadir);
 document.getElementById("cerrarPopup").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){
-    //prevenir el sumbit del form
-    event.preventDefault()
-});
-//Eventos para grupos
+    event.preventDefault()}); //prevenir el sumbit del form
+    //Eventos para grupos
 document.getElementById("cancelarGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
 document.getElementById("cerrarPopupGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
 document.getElementById("agregarGrupo").addEventListener("click", ()=> {popup("#popupNuevoGrupo","show");});
 document.getElementById("añadirGrupo").addEventListener("click", agregarGrupo);
 document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 document.getElementById("pagador").addEventListener("change", validarOpciones);
-
+    //Eventos para eliminar Gastos
+document.getElementById("eliminarGastos").addEventListener("click",eliminarGastos);
 
 //Funciones
 function iniciar(){
     //Traigo los grupos
+    usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
     for (let i = 0; i< localStorage.length; i++){
         if(/^Grupo/.test(localStorage.key(i))){
             let grupoActual = JSON.parse(localStorage.getItem(localStorage.key(i)))
             grupos.push(grupoActual);
-            recuperarGrupos(grupoActual);
+            recuperarGrupos(grupoActual); //Agrego los grupos al menú
         }
     }
-
 }
 
 function limpiarTabla(){
@@ -82,7 +85,6 @@ function limpiarTabla(){
     while(filas.hasChildNodes()){
         filas.removeChild(filas.lastChild)
     }
-
 }
 
 function gastoNuevoAñadir(){
@@ -117,7 +119,7 @@ function gastoNuevoAñadir(){
 }
 
 function noHayGrupo(){
-    return grupos != null;
+    return grupos == null;
 }
 
 function agregarGastoATabla(gasto){
@@ -130,6 +132,7 @@ function agregarGastoATabla(gasto){
     let deuda;	
     let saldoAFavor;
     let gastoPorPersona;
+    let eliminar;
     tabla = document.getElementById("movimientos");
     //inserto una fila a la tabla
     let filaAgregada = tabla.insertRow();
@@ -141,7 +144,7 @@ function agregarGastoATabla(gasto){
     deudores = filaAgregada.insertCell(4);
     deuda = filaAgregada.insertCell(5);
     saldoAFavor = filaAgregada.insertCell(6);
-    filaAgregada.insertCell(7);
+    eliminar = filaAgregada.insertCell(7);
     // Pongo los datos de la deuda en las celdas.
     gastoPorPersona = pagadoPorPersona(gasto);
     fecha.innerText = gasto.fecha;
@@ -151,8 +154,23 @@ function agregarGastoATabla(gasto){
     deudores.innerText =  obtenerDeudoresOrdenados(gasto);
     deuda.innerText = "$" + gastoPorPersona;
     saldoAFavor.innerText = "$" +  (gastoPorPersona * (gasto.personas.length)).toFixed(2); 
+    let botonEliminar = document.createElement("input");
+    botonEliminar.type = "checkbox";
+    eliminar.className ="td align-middle";
+    eliminar.append(botonEliminar);
+
+    //Agregar gastos al grupo correspondiente
 }
 
+function eliminarGastos(){
+    let movimientos = document.getElementById("movimientos");
+    for(let i = 0 ; i< movimientos.children.length;i ++){
+        if(movimientos.children[i].cells[7].children[0].checked){
+            movimientos.removeChild(movimientos.children[i]);
+        }
+    }
+    //Eliminar gastos del grupo y actualizar en localstorage
+}
 function obtenerDeudoresOrdenados(deuda){
     let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
         if (d1.nombre >d2.nombre){
@@ -242,7 +260,6 @@ function validarCheck(){
     }else{
         document.getElementById("pagador").disabled = false;
     }
-
 }
 
 function validarGasto(){
