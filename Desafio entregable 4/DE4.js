@@ -245,16 +245,20 @@ function prepararOpcionesForms(){
         opcion.text = integrantes.nombre;
         opcionesPagador.appendChild(opcion)
         //Checks
+        let div = document.createElement("div");
+        div.className = "form-check"
         let check = document.createElement("input");
         let label = document.createElement("label");
         check.type = "checkbox";
         check.id = "ch" + i;
         check.className = "form-check-input";
+        check.value = integrantes.nombre;
         label.className = "form-check-label";
         label.htmlFor = "ch" + i;
-        label.innerText = integrantes.nombre;
-        opcionesDeudor.append(check);
-        opcionesDeudor.append(label);
+        label.appendChild(document.createTextNode(integrantes.nombre));
+        div.append(check);
+        div.append(label);
+        opcionesDeudor.append(div);
         i++;
     }
     //TODO preparar opciones check
