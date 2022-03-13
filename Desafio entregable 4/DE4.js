@@ -1,12 +1,12 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Al agregar nuevos grupos limpiar tabla
-//TODO: Cambiar de grupos y cambiar tablas
-//TODO: Actualizar los totales de las tarjetas
+//TODO: Cambiar de grupos y cambiar tablas y todos los datos además del título
+//TODO: Actualizar grupos al crear un nuevo gasto y ponerle la deuda a ese grupo.
 //TODO: Ver como busco al grupo actual de los almacenados.
+//TODO: Actualizar los totales de las tarjetas
 //TODO: Boton para borrar grupos
-//TODO: Boton para eliminar un gasto especifico. (Quizas es mucho)
+//TODO: Boton para eliminar un gasto especifico.
 
 //Clases
 class Persona{
@@ -116,8 +116,8 @@ function gastoNuevoAñadir(){
     grupos[0].deudas.push(deuda);                                           //Verificar grupo correspondiente
 }
 
-function noHayGrupo(){ //Habria que Validar correctamente
-    return document.getElementById("detGrupo").innerText == "Detalles del grupo";
+function noHayGrupo(){
+    return grupos != null;
 }
 
 function agregarGastoATabla(gasto){
