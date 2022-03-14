@@ -1,15 +1,11 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Cambiar de grupos y cambiar tablas y todos los datos correspondientes al grupo actual seleccionado
-//TODO: Obtener grupo para agregar gasto o eliminar
 //TODO: Actualizar los totales de las tarjetas
 //TODO: Boton para borrar grupos 
 //TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo (En un futuro)
 //TODO: Liquidar deuda ver como agregar a la tabla
 //TODO: Poner estado a las deudas. (Saldada o no saldada)
-
-//TODO:Arreglar el eliminar no elimina todos
 
 //Clases
 class Persona{
@@ -178,7 +174,7 @@ function actualizarGrupo(indiceGrupo){
 
 function eliminarGastos(){
     let movimientos = document.getElementById("movimientos");
-    for(let i = 0 ; i< movimientos.children.length;i ++){
+    for(let i = movimientos.children.length-1 ; i>= 0 ;i --){
         if(movimientos.children[i].cells[7].children[0].checked){
             movimientos.removeChild(movimientos.children[i]);
             grupos[indiceGrupoSeleccionado].deudas.splice(i,1);
@@ -279,6 +275,13 @@ function traerInfoGrupoActual(indiceGrupo){
     mostrarDatosGrupoPantallaPrincipal(grupoActual);
     recuperarGastosGrupo(indiceGrupo);
     indiceGrupoSeleccionado = indiceGrupo; 
+    prepararOpcionesForms();
+}
+
+function limpiarNodo(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
 }
 
 function validarUserPrincipal(){
@@ -343,6 +346,9 @@ function validarStorageGrupo(grupo){
 function prepararOpcionesForms(){
     let opcionesPagador = document.getElementById("pagador");
     let opcionesDeudor = document.getElementById("checkDeudores");
+    //Limpio las opciones para no tener duplicados
+    limpiarNodo(opcionesPagador);
+    limpiarNodo(opcionesDeudor);
     let i = 0;
     //Agregar todos los integrantes del grupo
     //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
