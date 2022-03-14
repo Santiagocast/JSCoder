@@ -9,6 +9,8 @@
 //TODO: Liquidar deuda ver como agregar a la tabla
 //TODO: Poner estado a las deudas. (Saldada o no saldada)
 
+//TODO:Arreglar el eliminar no elimina todos
+
 //Clases
 class Persona{
     constructor(nombre, id) {
@@ -38,6 +40,7 @@ class Grupo {
 //Variables globales
 let usuarioPrincipal; 
 let grupos = [];
+let indiceGrupoSeleccionado = 0;
 
 //Si encuentra el nombre del usuario principal
 usuarioPrincipal = localStorage.getItem("0");
@@ -77,11 +80,13 @@ function iniciar(){
         if(/^Grupo/.test(localStorage.key(i))){
             let grupoActual = JSON.parse(localStorage.getItem(localStorage.key(i)))
             grupos.push(grupoActual);
-            recuperarGastosGrupo(grupos.length-1); // Recupera el ultimo grupo por el momento
             actualizarDetallesGrupo(grupos[grupos.length-1],i);
             agregarEventListener(i);
         }
     }
+    mostrarDatosGrupoPantallaPrincipal(grupos[indiceGrupoSeleccionado]);
+    recuperarGastosGrupo(indiceGrupoSeleccionado);
+
 }
 
 function limpiarTabla(){
@@ -107,11 +112,11 @@ function gastoNuevoAñadir(){
         let ch = document.getElementById("ch"+i);
         let deudor;
         if (ch.checked){
-            deudor = grupos[0].integrantes[i];                              //Deberia verificar grupo y asignarselo
+            deudor = grupos[indiceGrupoSeleccionado].integrantes[i];                              
             deudores.push(deudor); 
         }
     }
-    pagador = grupos[0].integrantes[pagador.selectedIndex];                 //Deberia verificar grupo y asignarselo
+    pagador = grupos[indiceGrupoSeleccionado].integrantes[pagador.selectedIndex];                 
     let deuda = new Deuda(fecha, monto, pagador, deudores, descripcion);
     agregarGastoATabla(deuda);
     //Reseteo y escondo el form
@@ -119,8 +124,8 @@ function gastoNuevoAñadir(){
     popup("#exampleModal", "hide");
     //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
     //Agregar gasto al grupo
-    grupos[0].deudas.push(deuda);                                           //Verificar grupo correspondiente
-    actualizarGrupo(0); //Actualizo en el storage el grupo por ahora siempre el primero
+    grupos[indiceGrupoSeleccionado].deudas.push(deuda);                                          
+    actualizarGrupo(indiceGrupoSeleccionado); 
 }
 
 function noHayGrupo(){
@@ -176,10 +181,10 @@ function eliminarGastos(){
     for(let i = 0 ; i< movimientos.children.length;i ++){
         if(movimientos.children[i].cells[7].children[0].checked){
             movimientos.removeChild(movimientos.children[i]);
-            grupos[0].deudas.splice(i,1);
+            grupos[indiceGrupoSeleccionado].deudas.splice(i,1);
         }
     }
-    actualizarGrupo(0); //Actualizo en el storage el grupo por ahora siempre el primero
+    actualizarGrupo(indiceGrupoSeleccionado); //Actualizo en el storage el grupo por ahora siempre el primero
 }
 function obtenerDeudoresOrdenados(deuda){
     let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
@@ -241,34 +246,39 @@ function agregarGrupo(){
     limpiarTabla();
     actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
     agregarEventListener(grupos.length);
-        
+    indiceGrupoSeleccionado = grupos.length-1;   
 }
 
 function actualizarDetallesGrupo(grupo, indiceEnStorage){
-    let nombre = grupo.nombre;
-    let nombreIntegrantesFinales = [];
-    for (const i of grupo.integrantes) {
-        nombreIntegrantesFinales.push(i.nombre);        
-    }
     let lugarAgregar = document.getElementById("gruposNuevitos");
     let listaNueva = document.createElement("li");
     listaNueva.innerHTML =`<a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${grupo.nombre}</a>`;
     listaNueva.id = "grupo" + indiceEnStorage;
     lugarAgregar.append(listaNueva);
-    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${nombre} </h3> `;
+    mostrarDatosGrupoPantallaPrincipal(grupo);
+}
+
+function mostrarDatosGrupoPantallaPrincipal(grupo){
+    let nombreIntegrantesFinales = [];
+    for (const i of grupo.integrantes) {
+        nombreIntegrantesFinales.push(i.nombre);        
+    }
+    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${grupo.nombre} </h3> `;
     document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
-    
 }
 
 function agregarEventListener(indiceGrupo){
     let grupoActual = document.getElementById(`grupo${indiceGrupo}`);
-    grupoActual.addEventListener("click", traerInfoGrupoActual);
+    grupoActual.addEventListener("click", () =>{ traerInfoGrupoActual(indiceGrupo-1)});
 
 }
 
-function traerInfoGrupoActual(){
-    console.log("Entraste a un grupo");
-
+function traerInfoGrupoActual(indiceGrupo){
+    let grupoActual = grupos[indiceGrupo];
+    console.log(`Entraste a un grupo ${grupoActual.nombre}`);
+    mostrarDatosGrupoPantallaPrincipal(grupoActual);
+    recuperarGastosGrupo(indiceGrupo);
+    indiceGrupoSeleccionado = indiceGrupo; 
 }
 
 function validarUserPrincipal(){
@@ -301,7 +311,7 @@ function validarGasto(){
         alert("Antes debe agregar un grupo")
         popup("#popupNuevoGrupo", "show")
     }else{
-        if(document.getElementById("pagador").options.length != grupos[0].integrantes.length){  //Deberia verificar grupo y asignarselo
+        if(document.getElementById("pagador").options.length != grupos[indiceGrupoSeleccionado].integrantes.length){  //Deberia verificar grupo y asignarselo
             prepararOpcionesForms();
         }
         popup("#exampleModal", "show");
@@ -336,7 +346,7 @@ function prepararOpcionesForms(){
     let i = 0;
     //Agregar todos los integrantes del grupo
     //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
-    for (const integrantes of grupos[0].integrantes) {                                      //Deberia verificar grupo y asignarselo
+    for (const integrantes of grupos[indiceGrupoSeleccionado].integrantes) {                                      //Deberia verificar grupo y asignarselo
         //Select
         let opcion = document.createElement("option");
         opcion.text = integrantes.nombre;
