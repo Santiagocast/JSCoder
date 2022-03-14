@@ -79,6 +79,7 @@ function iniciar(){
             grupos.push(grupoActual);
             recuperarGastosGrupo(grupos.length-1); // Recupera el ultimo grupo por el momento
             actualizarDetallesGrupo(grupos[grupos.length-1],i);
+            agregarEventListener(i);
         }
     }
 }
@@ -239,6 +240,7 @@ function agregarGrupo(){
     grupos.push(grupo);
     limpiarTabla();
     actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
+    agregarEventListener(grupos.length);
         
 }
 
@@ -256,6 +258,17 @@ function actualizarDetallesGrupo(grupo, indiceEnStorage){
     document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${nombre} </h3> `;
     document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
     
+}
+
+function agregarEventListener(indiceGrupo){
+    let grupoActual = document.getElementById(`grupo${indiceGrupo}`);
+    grupoActual.addEventListener("click", traerInfoGrupoActual);
+
+}
+
+function traerInfoGrupoActual(){
+    console.log("Entraste a un grupo");
+
 }
 
 function validarUserPrincipal(){
