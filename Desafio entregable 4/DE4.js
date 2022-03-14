@@ -1,7 +1,6 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Actualizar los totales de las tarjetas
 //TODO: Boton para borrar grupos 
 //TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo (En un futuro)
 //TODO: Liquidar deuda ver como agregar a la tabla
@@ -22,6 +21,7 @@ class Deuda {
         this.personas = personasIncluidasEnGasto;
         this.cantidadPersonas = this.personas.length+1;
         this.descripcion = descripcion;
+        this.pagadoPorPersona = pagadoPorPersona(this);
     }    
 }
 class Grupo {
@@ -80,9 +80,10 @@ function iniciar(){
             agregarEventListener(i);
         }
     }
-    mostrarDatosGrupoPantallaPrincipal(grupos[indiceGrupoSeleccionado]);
-    recuperarGastosGrupo(indiceGrupoSeleccionado);
-
+    if(grupos.length !=0){
+        traerInfoGrupoActual(indiceGrupoSeleccionado);
+        actualizarTarjetas(indiceGrupoSeleccionado);
+    }
 }
 
 function limpiarTabla(){
@@ -118,10 +119,10 @@ function gastoNuevoAñadir(){
     //Reseteo y escondo el form
     document.getElementById("gastoNuevo").reset();
     popup("#exampleModal", "hide");
-    //Debería actualizar las tarjetas con los saldos arriba, ver que onda usuarios y sesiones.
     //Agregar gasto al grupo
     grupos[indiceGrupoSeleccionado].deudas.push(deuda);                                          
-    actualizarGrupo(indiceGrupoSeleccionado); 
+    actualizarGrupo(indiceGrupoSeleccionado);
+    actualizarTarjetas(indiceGrupoSeleccionado); 
 }
 
 function noHayGrupo(){
@@ -152,7 +153,7 @@ function agregarGastoATabla(gasto){
     saldoAFavor = filaAgregada.insertCell(6);
     eliminar = filaAgregada.insertCell(7);
     // Pongo los datos de la deuda en las celdas.
-    gastoPorPersona = pagadoPorPersona(gasto);
+    gastoPorPersona = gasto.pagadoPorPersona;
     fecha.innerText = gasto.fecha;
     descripcion.innerText = gasto.descripcion;
     precio.innerText = "$" + gasto.total.toFixed(2);
@@ -180,7 +181,8 @@ function eliminarGastos(){
             grupos[indiceGrupoSeleccionado].deudas.splice(i,1);
         }
     }
-    actualizarGrupo(indiceGrupoSeleccionado); //Actualizo en el storage el grupo por ahora siempre el primero
+    actualizarGrupo(indiceGrupoSeleccionado); //Actualizo en el storage el grupo
+    actualizarTarjetas(indiceGrupoSeleccionado);
 }
 function obtenerDeudoresOrdenados(deuda){
     let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
@@ -252,6 +254,7 @@ function actualizarDetallesGrupo(grupo, indiceEnStorage){
     listaNueva.id = "grupo" + indiceEnStorage;
     lugarAgregar.append(listaNueva);
     mostrarDatosGrupoPantallaPrincipal(grupo);
+    actualizarTarjetas(indiceEnStorage-1)
 }
 
 function mostrarDatosGrupoPantallaPrincipal(grupo){
@@ -274,8 +277,33 @@ function traerInfoGrupoActual(indiceGrupo){
     console.log(`Entraste a un grupo ${grupoActual.nombre}`);
     mostrarDatosGrupoPantallaPrincipal(grupoActual);
     recuperarGastosGrupo(indiceGrupo);
+    actualizarTarjetas(indiceGrupo);
     indiceGrupoSeleccionado = indiceGrupo; 
     prepararOpcionesForms();
+}
+
+function actualizarTarjetas(indiceGrupo){
+    let deuda = document.getElementById("tarjetaDeuda");
+    let aFavor = document.getElementById("tarjetaFavor");
+    let total = document.getElementById("tarjetaTotal");
+    let subtotal = 0;
+    let subDeuda = 0;
+    let subFavor = 0;
+    for (const deuda of grupos[indiceGrupo].deudas) {
+        subtotal += deuda.total
+        if(deuda.pagador.id == 0){
+            subFavor += deuda.total - deuda.pagadoPorPersona;
+        }else{
+            for (const persona of deuda.personas) {
+                if(persona.id == 0){
+                    subDeuda += parseFloat(deuda.pagadoPorPersona);
+                }
+            }
+        }
+    }    
+    deuda.innerText = `$ ${subDeuda.toFixed(2)}`;
+    aFavor.innerText = `$ ${subFavor.toFixed(2)}`;
+    total.innerText = `$ ${subtotal.toFixed(2)}`;
 }
 
 function limpiarNodo(parent) {
