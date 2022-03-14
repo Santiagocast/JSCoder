@@ -6,6 +6,8 @@
 //TODO: Actualizar los totales de las tarjetas
 //TODO: Boton para borrar grupos 
 //TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo (En un futuro)
+//TODO: Liquidar deuda ver como agregar a la tabla
+//TODO: Poner estado a las deudas. (Saldada o no saldada)
 
 //Clases
 class Persona{
@@ -76,7 +78,7 @@ function iniciar(){
             let grupoActual = JSON.parse(localStorage.getItem(localStorage.key(i)))
             grupos.push(grupoActual);
             recuperarGastosGrupo(grupos.length-1); // Recupera el ultimo grupo por el momento
-            actualizarDetallesGrupo(grupos[grupos.length-1]);
+            actualizarDetallesGrupo(grupos[grupos.length-1],i);
         }
     }
 }
@@ -236,11 +238,11 @@ function agregarGrupo(){
     localStorage.setItem(key,JSON.stringify(grupo));
     grupos.push(grupo);
     limpiarTabla();
-    actualizarDetallesGrupo(grupos[grupos.length-1]);
+    actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
         
 }
 
-function actualizarDetallesGrupo(grupo){
+function actualizarDetallesGrupo(grupo, indiceEnStorage){
     let nombre = grupo.nombre;
     let nombreIntegrantesFinales = [];
     for (const i of grupo.integrantes) {
@@ -249,6 +251,7 @@ function actualizarDetallesGrupo(grupo){
     let lugarAgregar = document.getElementById("gruposNuevitos");
     let listaNueva = document.createElement("li");
     listaNueva.innerHTML =`<a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>${grupo.nombre}</a>`;
+    listaNueva.id = "grupo" + indiceEnStorage;
     lugarAgregar.append(listaNueva);
     document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${nombre} </h3> `;
     document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
