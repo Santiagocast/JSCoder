@@ -259,8 +259,8 @@ function mostrarDatosGrupoPantallaPrincipal(grupo){
     for (const i of grupo.integrantes) {
         nombreIntegrantesFinales.push(i.nombre);        
     }
-    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${grupo.nombre} </h3> `;
-    document.getElementById("integrantesActuales").innerHTML = ` <h3 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h3> `;
+    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${grupo.nombre} </h2> `;
+    document.getElementById("integrantesActuales").innerHTML = ` <h4 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h4> `;
 }
 
 function agregarEventListener(indiceGrupo){

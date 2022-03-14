@@ -57,10 +57,6 @@
               <button type="button" class="btn btn-sm btn-outline-secondary">Compartir</button>
               <button type="button" class="btn btn-sm btn-outline-secondary">Exportar</button>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              Esta semana
-            </button>
           </div>
         </div>
   
@@ -72,7 +68,6 @@
               </div>
               <div class="card-body">
                 <h1 class="card-title pricing-card-title">$0</h1>
-                <button type="button" class="w-100 btn btn-lg btn-outline-primary">Liquidar deudas</button>
               </div>
             </div>
           </div>
@@ -83,7 +78,6 @@
               </div>
               <div class="card-body">
                 <h1 class="card-title pricing-card-title">$15</h1>
-                <button type="button" class="w-100 btn btn-lg btn-outline-primary">Solicitar pago</button>
               </div>
             </div>
           </div>
@@ -94,128 +88,132 @@
               </div>
               <div class="card-body">
                 <h1 class="card-title pricing-card-title">$29</h1>
-                <button type="button" class="w-100 btn btn-lg btn-primary">Ver detalles</button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-0 pb-0 mb-0">
           <h2 id="detGrupo" >Detalles del grupo</h2>
         </div>
-        <div id="integrantesActuales" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h3 >Integrantes: </h3>
+        <div id="integrantesActuales" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-0 pb-2 mb-3 border-bottom">
+          <h4 >Integrantes: </h4>
         </div>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-left mb-3">
-          <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">Liquidar deuda</button>
-          <button id="agregarGasto" type="button" class="btn btn-outline-secondary btn-lg px-4">Añadir gasto</button>
-          <button id="eliminarGastos" type="button" class="btn btn-outline-secondary btn-lg px-4">Eliminar gastos seleccionados</button>
-          
-          <!-- Popup para agregar gastos nuevos -->
-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Añadir nuevo gasto</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrarPopup">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form id="gastoNuevo">
-                    <div class="form-group">
-                      <label class="form-label" for="fecha">Ingrese la fecha del gasto</label>
-                      <input type="date" class="form-control" id="fecha" aria-describedby="emailHelp" placeholder="Fecha">
-                      <label class="form-label" for="descripcion">Ingrese descripcion</label>
-                      <input type="text" class="form-control" id="descripcion" aria-describedby="inputGroup-sizing-sm" placeholder="Descripción" >
-                    </div>
-                    <div class="row align-items-center">
-                      <div class="form-group col">
-                        <label class="form-label" for="monto">Monto del gasto</label>
-                        <input type="number" class="form-control" id="monto" aria-describedby="emailHelp" placeholder="Ingrese monto">
-                      </div>
-                      <div class="form-group col-auto">
-                        <label for="pagador" class="form-label">Pagado por</label>
-                        <select class="form-select" id="pagador"> 
-                          <!-- Select pagador -->
-                        </select>    
-                      </div>
-                      <div class = "form-group col-auto" >
-                        <input type="checkbox" class="form-check-input" id="pagadoPorMi">
-                        <label class="form-label" for="pagadoPorMi">Pagado por mi</label>   
-                      </div>
-                    </div>
-                    <div class="form-group">                             
-                      <label for="deudores" class="form-label">Seleccione los deudores</label>
-                       <div id="checkDeudores">
-                         <!-- Checks dedudores -->
-                       </div>  
-                    </div>
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" id="cancelarGasto" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                  <button type="button" id="gastoNuevoAñadir" class="btn btn-primary">Añadir gastos</button>
-                </div>
-              </div>
-            </div>
-          </div>  
-          <!-- Popup para agregar gastos nuevos -->
 
-          <!-- Popup para agregar nuevos grupos-->
-          <div class="modal fade" id="popupNuevoGrupo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Añadir nuevo grupo</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrarPopupGrupo">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form id="grupoNuevo">
-                    <div class="form-group">
-                      <label for="nombreGrupo">Ingrese nombre del grupo</label>
-                      <input type="text" class="form-control" id="nombreGrupo" aria-describedby="inputGroup-sizing-sm" placeholder="Nombre del grupo" >
-                      <label for="descripcionGrupo">Ingrese descripcion</label>
-                      <input type="text" class="form-control" id="descripcionGrupo" aria-describedby="inputGroup-sizing-sm" placeholder="Descripción del grupo" >
-                      <label for="integrantes" class="form-label">Escriba los nombres de los integrantes del grupo sin incluirte(separados por coma o enter)</label>
-                      <select class="form-select" id="integrantes" name="tags_separator[]" multiple multiples data-allow-new="true" data-allow-clear="true" data-separator=" |,|  ">
-                      </select>
-                    </div>
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" id="cancelarGrupo" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                  <button type="button" id="añadirGrupo" class="btn btn-primary">Añadir grupo</button>
-                </div>
-              </div>
-            </div>
-          </div>  
-          <!-- Popup para agregar nuevos grupos-->
-
-           <!-- Popup para nombre principal-->
-           <div class="modal fade" id="popupUserPrincipal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document" >
-              <div class="modal-content" >
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Nombre usuario principal</h5>
-                </div>
-                <div class="modal-body">
-                  <form id="grupoNuevo">
-                    <div class="form-group">
-                      <label for="userPrincipal">Ingrese nombre usuario principal</label>                    </div>
-                      <input type="text" class="form-control" id="userPrincipal" aria-describedby="inputGroup-sizing-sm" placeholder="Usuario principal">
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" id="añadirUserPrincipal" class="btn btn-primary">Añadir nombre</button>
-                </div>
-              </div>
-            </div>
-          </div>  
-          <!-- Popup para nombre princpal-->          
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">Liquidar deuda</button>
+            <button id="agregarGasto" type="button" class="btn btn-outline-secondary btn-lg px-4">Añadir gasto</button>
+          </div>
+          <div class="btn-group me-2">
+              <button id="eliminarGastos" type="button" class="btn btn-outline-secondary btn-lg px-4 ">Eliminar gastos seleccionados</button>         
+          </div>
         </div>
+
+        <!-- Popup para agregar gastos nuevos -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Añadir nuevo gasto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrarPopup">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="gastoNuevo">
+                  <div class="form-group">
+                    <label class="form-label" for="fecha">Ingrese la fecha del gasto</label>
+                    <input type="date" class="form-control" id="fecha" aria-describedby="emailHelp" placeholder="Fecha">
+                    <label class="form-label" for="descripcion">Ingrese descripcion</label>
+                    <input type="text" class="form-control" id="descripcion" aria-describedby="inputGroup-sizing-sm" placeholder="Descripción" >
+                  </div>
+                  <div class="row align-items-center">
+                    <div class="form-group col">
+                      <label class="form-label" for="monto">Monto del gasto</label>
+                      <input type="number" class="form-control" id="monto" aria-describedby="emailHelp" placeholder="Ingrese monto">
+                    </div>
+                    <div class="form-group col-auto">
+                      <label for="pagador" class="form-label">Pagado por</label>
+                      <select class="form-select" id="pagador"> 
+                        <!-- Select pagador -->
+                      </select>    
+                    </div>
+                    <div class = "form-group col-auto" >
+                      <input type="checkbox" class="form-check-input" id="pagadoPorMi">
+                      <label class="form-label" for="pagadoPorMi">Pagado por mi</label>   
+                    </div>
+                  </div>
+                  <div class="form-group">                             
+                    <label for="deudores" class="form-label">Seleccione los deudores</label>
+                      <div id="checkDeudores">
+                        <!-- Checks dedudores -->
+                      </div>  
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="cancelarGasto" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="gastoNuevoAñadir" class="btn btn-primary">Añadir gastos</button>
+              </div>
+            </div>
+          </div>
+        </div>  
+        <!-- Popup para agregar gastos nuevos -->
+
+        <!-- Popup para agregar nuevos grupos-->
+        <div class="modal fade" id="popupNuevoGrupo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Añadir nuevo grupo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="cerrarPopupGrupo">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="grupoNuevo">
+                  <div class="form-group">
+                    <label for="nombreGrupo">Ingrese nombre del grupo</label>
+                    <input type="text" class="form-control" id="nombreGrupo" aria-describedby="inputGroup-sizing-sm" placeholder="Nombre del grupo" >
+                    <label for="descripcionGrupo">Ingrese descripcion</label>
+                    <input type="text" class="form-control" id="descripcionGrupo" aria-describedby="inputGroup-sizing-sm" placeholder="Descripción del grupo" >
+                    <label for="integrantes" class="form-label">Escriba los nombres de los integrantes del grupo sin incluirte(separados por coma o enter)</label>
+                    <select class="form-select" id="integrantes" name="tags_separator[]" multiple multiples data-allow-new="true" data-allow-clear="true" data-separator=" |,|  ">
+                    </select>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="cancelarGrupo" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="añadirGrupo" class="btn btn-primary">Añadir grupo</button>
+              </div>
+            </div>
+          </div>
+        </div>  
+        <!-- Popup para agregar nuevos grupos-->
+
+          <!-- Popup para nombre principal-->
+          <div class="modal fade" id="popupUserPrincipal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document" >
+            <div class="modal-content" >
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nombre usuario principal</h5>
+              </div>
+              <div class="modal-body">
+                <form id="grupoNuevo">
+                  <div class="form-group">
+                    <label for="userPrincipal">Ingrese nombre usuario principal</label>                    </div>
+                    <input type="text" class="form-control" id="userPrincipal" aria-describedby="inputGroup-sizing-sm" placeholder="Usuario principal">
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="añadirUserPrincipal" class="btn btn-primary">Añadir nombre</button>
+              </div>
+            </div>
+          </div>
+        </div>  
+        <!-- Popup para nombre princpal--> 
 
         <!-- Tabla de gastos-->
         <div class="table-responsive">
