@@ -1,7 +1,8 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Boton para borrar grupos 
+//TODO: Boton para borrar grupos
+    //(Borrar de la lista, storage y traer info del primer grupo ver que pasa si es el unico grupo)
 //TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo (En un futuro)
 //TODO: Liquidar deuda ver como agregar a la tabla
 //TODO: Poner estado a las deudas. (Saldada o no saldada)
