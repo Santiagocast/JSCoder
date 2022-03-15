@@ -90,6 +90,7 @@ function actualizarTodosLosGrupos(){
         actualizarTarjetas(indiceGrupoSeleccionado);
     }else{
         limpiarTabla();
+        limpiardetalleGrupo();
         actualizarTarjetas(-1); //Le paso este valor que sería para poner las cartas en 0
     }
 }
@@ -99,6 +100,11 @@ function limpiarTabla(){
     while(filas.hasChildNodes()){
         filas.removeChild(filas.lastChild)
     }
+}
+
+function limpiardetalleGrupo(){
+    document.getElementById("detGrupo").innerText = "Detalles del grupo";
+    document.getElementById("integrantesActuales").innerHTML = ` <h4 >Integrantes:</h4>`;
 }
 
 function validarFormGasto(){
