@@ -2,8 +2,6 @@
     Tags.init("select[multiples]");
 
 //TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo
-//TODO: Liquidar deuda ver como agregar a la tabla
-//TODO: Poner estado a las deudas. (Saldada o no saldada)
 
 //Clases
 class Persona{
@@ -21,6 +19,7 @@ class Deuda {
         this.cantidadPersonas = this.personas.length+1;
         this.descripcion = descripcion;
         this.pagadoPorPersona = pagadoPorPersona(this);
+        this.estado = "A saldar";
     }    
 }
 class Grupo {
@@ -66,6 +65,9 @@ document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 document.getElementById("pagador").addEventListener("change", validarOpciones);
     //Eventos para eliminar Gastos
 document.getElementById("eliminarGastos").addEventListener("click",eliminarGastos);
+    //Eventos para saldar Gastos
+document.getElementById("saldarGasto").addEventListener("click",saldarGastosSeleccionados);
+
 
 //Funciones
 function iniciar(){
@@ -162,20 +164,23 @@ function agregarGastoATabla(gasto){
     let deuda;	
     let saldoAFavor;
     let gastoPorPersona;
-    let eliminar;
+    let seleccionar;
+    let estado;
     tabla = document.getElementById("movimientos");
     //inserto una fila a la tabla
     let filaAgregada = tabla.insertRow();
     //inserto las celdas de las filas
-    fecha = filaAgregada.insertCell(0);
-    descripcion = filaAgregada.insertCell(1);
-    precio = filaAgregada.insertCell(2);
-    pagadoPor = filaAgregada.insertCell(3);
-    deudores = filaAgregada.insertCell(4);
-    deuda = filaAgregada.insertCell(5);
-    saldoAFavor = filaAgregada.insertCell(6);
-    eliminar = filaAgregada.insertCell(7);
+    seleccionar = filaAgregada.insertCell(0);
+    fecha = filaAgregada.insertCell(1);
+    descripcion = filaAgregada.insertCell(2);
+    precio = filaAgregada.insertCell(3);
+    pagadoPor = filaAgregada.insertCell(4);
+    deudores = filaAgregada.insertCell(5);
+    deuda = filaAgregada.insertCell(6);
+    saldoAFavor = filaAgregada.insertCell(7);
+    estado = filaAgregada.insertCell(8);
     // Pongo los datos de la deuda en las celdas.
+    estado.innerText = gasto.estado;
     gastoPorPersona = gasto.pagadoPorPersona;
     fecha.innerText = gasto.fecha;
     descripcion.innerText = gasto.descripcion;
@@ -186,8 +191,8 @@ function agregarGastoATabla(gasto){
     saldoAFavor.innerText = "$" +  (gastoPorPersona * (gasto.personas.length)).toFixed(2); 
     let botonEliminar = document.createElement("input");
     botonEliminar.type = "checkbox";
-    eliminar.className ="td align-middle";
-    eliminar.append(botonEliminar);
+    seleccionar.className ="td align-middle";
+    seleccionar.append(botonEliminar);
 
     //Agregar gastos al grupo correspondiente
 }
@@ -199,7 +204,7 @@ function actualizarGrupo(indiceGrupo){
 function eliminarGastos(){
     let movimientos = document.getElementById("movimientos");
     for(let i = movimientos.children.length-1 ; i>= 0 ;i --){
-        if(movimientos.children[i].cells[7].children[0].checked){
+        if(movimientos.children[i].cells[0].children[0].checked){
             movimientos.removeChild(movimientos.children[i]);
             grupos[indiceGrupoSeleccionado].deudas.splice(i,1);
         }
@@ -207,6 +212,19 @@ function eliminarGastos(){
     actualizarGrupo(indiceGrupoSeleccionado); //Actualizo en el storage el grupo
     actualizarTarjetas(indiceGrupoSeleccionado);
 }
+
+function saldarGastosSeleccionados(){
+    let movimientos = document.getElementById("movimientos");
+    for(let i = movimientos.children.length-1 ; i>= 0 ;i --){
+        if(movimientos.children[i].cells[0].children[0].checked){
+            grupos[indiceGrupoSeleccionado].deudas[i].estado = "Saldada"
+        }
+    }
+    actualizarGrupo(indiceGrupoSeleccionado);
+    actualizarTarjetas(indiceGrupoSeleccionado);
+    recuperarGastosGrupo(indiceGrupoSeleccionado);
+}
+
 function obtenerDeudoresOrdenados(deuda){
     let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
         if (d1.nombre >d2.nombre){
@@ -364,12 +382,14 @@ function actualizarTarjetas(indiceGrupo){
     if(indiceGrupo != -1){
         for (const deuda of grupos[indiceGrupo].deudas) {
             subtotal += deuda.total
-            if(deuda.pagador.id == 0){
-                subFavor += deuda.total - deuda.pagadoPorPersona;
-            }else{
-                for (const persona of deuda.personas) {
-                    if(persona.id == 0){
-                        subDeuda += parseFloat(deuda.pagadoPorPersona);
+            if(deuda.estado == "A saldar"){
+                if(deuda.pagador.id == 0){
+                    subFavor += deuda.total - deuda.pagadoPorPersona;
+                }else{
+                    for (const persona of deuda.personas) {
+                        if(persona.id == 0){
+                            subDeuda += parseFloat(deuda.pagadoPorPersona);
+                        }
                     }
                 }
             }
