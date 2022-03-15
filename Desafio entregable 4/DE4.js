@@ -1,9 +1,7 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Boton para borrar grupos
-    //(Borrar de la lista, storage y traer info del primer grupo ver que pasa si es el unico grupo)
-//TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo (En un futuro)
+//TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo
 //TODO: Liquidar deuda ver como agregar a la tabla
 //TODO: Poner estado a las deudas. (Saldada o no saldada)
 
@@ -55,7 +53,7 @@ document.getElementById("añadirUserPrincipal").addEventListener("click", valida
     //Eventos para añadir los gastos.
 document.getElementById("agregarGasto").addEventListener("click", validarGasto);
 document.getElementById("cancelarGasto").addEventListener("click", () =>{popup("#exampleModal", "hide")});
-document.getElementById("gastoNuevoAñadir").addEventListener("click", gastoNuevoAñadir);
+document.getElementById("gastoNuevoAñadir").addEventListener("click", validarFormGasto);
 document.getElementById("cerrarPopup").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){
     event.preventDefault()}); //prevenir el sumbit del form
@@ -73,6 +71,12 @@ document.getElementById("eliminarGastos").addEventListener("click",eliminarGasto
 function iniciar(){
     //Traigo los grupos
     usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
+    actualizarTodosLosGrupos();
+}
+
+function actualizarTodosLosGrupos(){
+    grupos = [];
+    limpiarNodo(document.getElementById("gruposNuevitos"));
     for (let i = 0; i< localStorage.length; i++){
         if(/^Grupo/.test(localStorage.key(i))){
             let grupoActual = JSON.parse(localStorage.getItem(localStorage.key(i)))
@@ -84,6 +88,9 @@ function iniciar(){
     if(grupos.length !=0){
         traerInfoGrupoActual(indiceGrupoSeleccionado);
         actualizarTarjetas(indiceGrupoSeleccionado);
+    }else{
+        limpiarTabla();
+        actualizarTarjetas(-1); //Le paso este valor que sería para poner las cartas en 0
     }
 }
 
@@ -92,6 +99,15 @@ function limpiarTabla(){
     while(filas.hasChildNodes()){
         filas.removeChild(filas.lastChild)
     }
+}
+
+function validarFormGasto(){
+   let monto = document.getElementById("monto").value;
+   if(monto == ""){
+       alert("Debe ingresar un monto")
+   }else{
+       gastoNuevoAñadir();
+   }
 }
 
 function gastoNuevoAñadir(){
@@ -157,7 +173,7 @@ function agregarGastoATabla(gasto){
     gastoPorPersona = gasto.pagadoPorPersona;
     fecha.innerText = gasto.fecha;
     descripcion.innerText = gasto.descripcion;
-    precio.innerText = "$" + gasto.total.toFixed(2);
+    precio.innerText = "$" + parseFloat(gasto.total).toFixed(2);
     pagadoPor.innerText = gasto.pagador.nombre;
     deudores.innerText =  obtenerDeudoresOrdenados(gasto);
     deuda.innerText = "$" + gastoPorPersona;
@@ -267,6 +283,7 @@ function actualizarDetallesGrupo(grupo, indiceEnStorage){
     basura.className = "nav-link";
     basura.id = "basura" + indiceEnStorage;
     nombreGrupo.id = "grupo" + indiceEnStorage;
+    listaNueva.id = "lista" + indiceEnStorage;
     iconoGrupo.innerHTML = 
         `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
             <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -302,7 +319,9 @@ function mostrarDatosGrupoPantallaPrincipal(grupo){
 
 function agregarEventListener(indiceGrupo){
     let grupoActual = document.getElementById(`grupo${indiceGrupo}`);
+    let basuraActual = document.getElementById(`basura${indiceGrupo}`);
     grupoActual.addEventListener("click", () =>{ traerInfoGrupoActual(indiceGrupo-1)});
+    basuraActual.addEventListener("click",()=>{eliminarGrupoStorage(indiceGrupo-1)})
 
 }
 
@@ -316,6 +335,19 @@ function traerInfoGrupoActual(indiceGrupo){
     prepararOpcionesForms();
 }
 
+function eliminarGrupoStorage(indiceGrupo){
+    let grupoABorrar = grupos[indiceGrupo];
+    let key = `Grupo ${grupoABorrar.nombre}`;
+    localStorage.removeItem(key);
+    document.getElementById(`lista${indiceGrupo +1}`).remove();
+    if(indiceGrupo == indiceGrupoSeleccionado){ 
+        indiceGrupoSeleccionado = 0; //Me voy al primer grupo creado
+        actualizarTodosLosGrupos(); //Actualizo las listas del costado y los grupos
+    }
+
+}
+
+
 function actualizarTarjetas(indiceGrupo){
     let deuda = document.getElementById("tarjetaDeuda");
     let aFavor = document.getElementById("tarjetaFavor");
@@ -323,18 +355,20 @@ function actualizarTarjetas(indiceGrupo){
     let subtotal = 0;
     let subDeuda = 0;
     let subFavor = 0;
-    for (const deuda of grupos[indiceGrupo].deudas) {
-        subtotal += deuda.total
-        if(deuda.pagador.id == 0){
-            subFavor += deuda.total - deuda.pagadoPorPersona;
-        }else{
-            for (const persona of deuda.personas) {
-                if(persona.id == 0){
-                    subDeuda += parseFloat(deuda.pagadoPorPersona);
+    if(indiceGrupo != -1){
+        for (const deuda of grupos[indiceGrupo].deudas) {
+            subtotal += deuda.total
+            if(deuda.pagador.id == 0){
+                subFavor += deuda.total - deuda.pagadoPorPersona;
+            }else{
+                for (const persona of deuda.personas) {
+                    if(persona.id == 0){
+                        subDeuda += parseFloat(deuda.pagadoPorPersona);
+                    }
                 }
             }
-        }
-    }    
+        }    
+    }
     deuda.innerText = `$ ${subDeuda.toFixed(2)}`;
     aFavor.innerText = `$ ${subFavor.toFixed(2)}`;
     total.innerText = `$ ${subtotal.toFixed(2)}`;
@@ -369,6 +403,7 @@ function validarCheck(){
     }else{
         document.getElementById("pagador").disabled = false;
     }
+    validarOpciones();
 }
 
 function validarGasto(){
@@ -376,9 +411,7 @@ function validarGasto(){
         alert("Antes debe agregar un grupo")
         popup("#popupNuevoGrupo", "show")
     }else{
-        if(document.getElementById("pagador").options.length != grupos[indiceGrupoSeleccionado].integrantes.length){  //Deberia verificar grupo y asignarselo
-            prepararOpcionesForms();
-        }
+        prepararOpcionesForms(); 
         popup("#exampleModal", "show");
         validarOpciones();
     }
@@ -390,9 +423,10 @@ function validarOpciones(){
     let check = document.getElementById("ch" + opcionElegida);
     for(let i = 0; i<checks; i++){
         let checkActual = document.getElementById("ch" + i);
-        checkActual.disabled = false
+        checkActual.disabled = false;
     }
     check.disabled = true;
+    check.checked = false;
 }
 
 function validarStorageGrupo(grupo){
