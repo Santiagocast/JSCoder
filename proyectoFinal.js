@@ -63,6 +63,16 @@ document.getElementById("agregarGrupo").addEventListener("click", ()=> {popup("#
 document.getElementById("añadirGrupo").addEventListener("click", agregarGrupo);
 document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 document.getElementById("pagador").addEventListener("change", validarOpciones);
+document.getElementById("cerrarPopupEditarGrupo").addEventListener("click", () =>{popup("#popupEditarGrupo", "hide")});
+document.getElementById("editGrupo").addEventListener("click", () =>{
+                                                                        popup("#popupEditarGrupo", "show")
+                                                                        document.getElementById("nombreGrupoEditar").value = grupos[indiceGrupoSeleccionado].nombre;
+                                                                        document.getElementById("descripcionGrupoEditar").value = grupos[indiceGrupoSeleccionado].descripcion;
+                                                                        //No me puedo traer los integrantes, quedan en el select pero no escritos en los tags.
+                                                                     });
+document.getElementById("cancelarEditarGrupo").addEventListener("click", () =>{popup("#popupEditarGrupo", "hide")});
+document.getElementById("editarGrupo").addEventListener("click", editarGrupo);
+
     //Eventos para eliminar Gastos
 document.getElementById("eliminarGastos").addEventListener("click",eliminarGastos);
     //Eventos para saldar Gastos
@@ -107,6 +117,7 @@ function limpiarTabla(){
 function limpiardetalleGrupo(){
     document.getElementById("detGrupo").innerText = "Detalles del grupo";
     document.getElementById("integrantesActuales").innerHTML = ` <h4 >Integrantes:</h4>`;
+    document.getElementById("detDescripcion").innerText = "" 
 }
 
 function validarFormGasto(){
@@ -260,23 +271,26 @@ function recuperarGastosGrupo(indiceGrupo){
     }
 }
 
+function integrantesFinales(integrantesDOM){
+    let integrantesFinales = [];
+    integrantesFinales.push(usuarioPrincipal);
+    for (const integrante of integrantesDOM) {
+        let i = 1;
+        if (integrante.selected){
+            integrantesFinales.push(new Persona (integrante.value, i));
+        }        
+        i++;
+    }
+    return integrantesFinales; 
+}
+
 function agregarGrupo(){
     let nombre = document.getElementById("nombreGrupo").value;
     let descripcion = document.getElementById("descripcionGrupo").value;
     let integrantes = document.getElementById("integrantes");
-    let integrantesFinales = [];
-    let nombreIntegrantesFinales = [];
-    integrantesFinales.push(usuarioPrincipal);
-    nombreIntegrantesFinales.push(usuarioPrincipal.nombre);
-    for (const integrante of integrantes) {
-        let i = 1;
-        if (integrante.selected){
-            integrantesFinales.push(new Persona (integrante.value, i));
-            nombreIntegrantesFinales.push(integrante.value);
-        }        
-        i++;
-    }
-    let grupo = new Grupo(nombre,descripcion,integrantesFinales);
+    let integrantesFinal = [] 
+    integrantesFinal = integrantesFinales(integrantes);
+    let grupo = new Grupo(nombre,descripcion,integrantesFinal);
     document.getElementById("grupoNuevo").reset();
     popup("#popupNuevoGrupo", "hide");
     let key  = validarStorageGrupo(grupo);
@@ -337,8 +351,10 @@ function mostrarDatosGrupoPantallaPrincipal(grupo){
     for (const i of grupo.integrantes) {
         nombreIntegrantesFinales.push(i.nombre);        
     }
-    document.getElementById("detGrupo").innerHTML = ` <h2 id="detGrupo" >Detalles del grupo: ${grupo.nombre} </h2> `;
+    document.getElementById("detGrupo").innerHTML = 
+        ` <h2 id="detGrupo" >Detalles del grupo: ${grupo.nombre} </h2>`;
     document.getElementById("integrantesActuales").innerHTML = ` <h4 >Integrantes: ${nombreIntegrantesFinales.join(", ")} </h4> `;
+    document.getElementById("detDescripcion").innerText = "Descripción: " + grupo.descripcion;
 }
 
 function agregarEventListener(indiceGrupo){
@@ -352,7 +368,7 @@ function agregarEventListener(indiceGrupo){
 function traerInfoGrupoActual(indiceGrupo){
     let grupoActual = grupos[indiceGrupo];
     console.log(`Entraste a un grupo ${grupoActual.nombre}`);
-    mostrarDatosGrupoPantallaPrincipal(grupoActual);
+    mostrarDatosGrupoPantallaPrincipal(grupoActual, indiceGrupo);
     recuperarGastosGrupo(indiceGrupo);
     actualizarTarjetas(indiceGrupo);
     indiceGrupoSeleccionado = indiceGrupo; 
@@ -369,6 +385,28 @@ function eliminarGrupoStorage(indiceGrupo){
         actualizarTodosLosGrupos(); //Actualizo las listas del costado y los grupos
     }
 
+}
+function editarGrupo(){ 
+    if(grupos.length != 0 ){
+        let grupoAEditar = grupos[indiceGrupoSeleccionado];
+        let nombre = document.getElementById("nombreGrupoEditar").value;
+        let descripcion = document.getElementById("descripcionGrupoEditar").value;
+        let integrantes = document.getElementById("integrantesEditar");
+        let integrantesFinal = [];
+        localStorage.removeItem(`Grupo ${grupos[indiceGrupoSeleccionado].nombre}`);
+        integrantesFinal = integrantesFinales(integrantes);
+        grupoAEditar.nombre = nombre;        
+        grupoAEditar.descripcion = descripcion;        
+        grupoAEditar.integrantes = integrantesFinal;
+        grupoAEditar.deudas = grupos[indiceGrupoSeleccionado].deudas;
+        grupos[indiceGrupoSeleccionado] = grupoAEditar;
+        actualizarGrupo(indiceGrupoSeleccionado)
+        actualizarTodosLosGrupos();
+        document.getElementById("grupoEditar").reset();
+        popup("#popupEditarGrupo", "hide");
+    }else{
+        alert("No hay grupo para editar")
+    }
 }
 
 
