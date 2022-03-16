@@ -1,8 +1,6 @@
  import Tags from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-tags@master/tags.js";
     Tags.init("select[multiples]");
 
-//TODO: Por ahora los grupos son inmutables, ver si agregar personas al grupo
-
 //Clases
 class Persona{
     constructor(nombre, id) {
