@@ -47,13 +47,13 @@ if (usuarioPrincipal == null){ //Debería ser la primera vez que abre
 //Eventos
     //Usuario principal
 document.getElementById("añadirUserPrincipal").addEventListener("click", validarUserPrincipal);
+document.getElementById("usuarioNuevo").addEventListener("keypress", cancelarEnter);
     //Eventos para añadir los gastos.
 document.getElementById("agregarGasto").addEventListener("click", validarGasto);
 document.getElementById("cancelarGasto").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevoAñadir").addEventListener("click", validarFormGasto);
 document.getElementById("cerrarPopup").addEventListener("click", () =>{popup("#exampleModal", "hide")});
-document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){
-    event.preventDefault()}); //prevenir el sumbit del form
+document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){event.preventDefault()}); //prevenir el sumbit del form
     //Eventos para grupos
 document.getElementById("cancelarGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
 document.getElementById("cerrarPopupGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
@@ -439,6 +439,12 @@ function actualizarTarjetas(indiceGrupo){
 function limpiarNodo(parent) {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
+    }
+}
+
+function cancelarEnter(){
+    if(event.keyCode == 13){
+        event.returnValue = false;
     }
 }
 
