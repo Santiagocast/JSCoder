@@ -44,17 +44,16 @@ if (usuarioPrincipal == null){ //Debería ser la primera vez que abre
     iniciar();
 }
 
-//Eventos
-    //Usuario principal
+//Eventos Usuario principal
 document.getElementById("añadirUserPrincipal").addEventListener("click", validarUserPrincipal);
 document.getElementById("usuarioNuevo").addEventListener("keypress", cancelarEnter);
-    //Eventos para añadir los gastos.
+//Eventos para añadir los gastos.
 document.getElementById("agregarGasto").addEventListener("click", validarGasto);
 document.getElementById("cancelarGasto").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevoAñadir").addEventListener("click", validarFormGasto);
 document.getElementById("cerrarPopup").addEventListener("click", () =>{popup("#exampleModal", "hide")});
 document.getElementById("gastoNuevo").addEventListener("sumbit", function(event){event.preventDefault()}); //prevenir el sumbit del form
-    //Eventos para grupos
+//Eventos para grupos
 document.getElementById("cancelarGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
 document.getElementById("cerrarPopupGrupo").addEventListener("click", () =>{popup("#popupNuevoGrupo", "hide")});
 document.getElementById("agregarGrupo").addEventListener("click", ()=> {popup("#popupNuevoGrupo","show");});
@@ -63,19 +62,17 @@ document.getElementById("pagadoPorMi").addEventListener("change", validarCheck);
 document.getElementById("pagador").addEventListener("change", validarOpciones);
 document.getElementById("cerrarPopupEditarGrupo").addEventListener("click", () =>{popup("#popupEditarGrupo", "hide")});
 document.getElementById("editGrupo").addEventListener("click", () =>{
-                                                                        popup("#popupEditarGrupo", "show")
-                                                                        document.getElementById("nombreGrupoEditar").value = grupos[indiceGrupoSeleccionado].nombre;
-                                                                        document.getElementById("descripcionGrupoEditar").value = grupos[indiceGrupoSeleccionado].descripcion;
-                                                                        //No me puedo traer los integrantes, quedan en el select pero no escritos en los tags.
-                                                                     });
+    popup("#popupEditarGrupo", "show")
+    document.getElementById("nombreGrupoEditar").value = grupos[indiceGrupoSeleccionado].nombre;
+    document.getElementById("descripcionGrupoEditar").value = grupos[indiceGrupoSeleccionado].descripcion;
+    //No me puedo traer los integrantes, quedan en el select pero no escritos en los tags.
+});
 document.getElementById("cancelarEditarGrupo").addEventListener("click", () =>{popup("#popupEditarGrupo", "hide")});
 document.getElementById("editarGrupo").addEventListener("click", editarGrupo);
-
-    //Eventos para eliminar Gastos
+//Eventos para eliminar Gastos
 document.getElementById("eliminarGastos").addEventListener("click",eliminarGastos);
-    //Eventos para saldar Gastos
+//Eventos para saldar Gastos
 document.getElementById("saldarGasto").addEventListener("click",saldarGastosSeleccionados);
-
 
 //Funciones
 function iniciar(){
@@ -120,11 +117,7 @@ function limpiardetalleGrupo(){
 
 function validarFormGasto(){
    let monto = document.getElementById("monto").value;
-   if(monto == ""){
-       alert("Debe ingresar un monto")
-   }else{
-       gastoNuevoAñadir();
-   }
+   monto == "" ? alert("Debe ingresar un monto") : gastoNuevoAñadir();
 }
 
 function gastoNuevoAñadir(){
@@ -164,33 +157,22 @@ function noHayGrupo(){
 }
 
 function agregarGastoATabla(gasto){
-    let tabla;
-    let fecha;
-    let descripcion;	
-    let precio;
-    let pagadoPor;	
-    let deudores;
-    let deuda;	
-    let saldoAFavor;
-    let gastoPorPersona;
-    let seleccionar;
-    let estado;
-    tabla = document.getElementById("movimientos");
+    let tabla = document.getElementById("movimientos");
     //inserto una fila a la tabla
     let filaAgregada = tabla.insertRow();
     //inserto las celdas de las filas
-    seleccionar = filaAgregada.insertCell(0);
-    fecha = filaAgregada.insertCell(1);
-    descripcion = filaAgregada.insertCell(2);
-    precio = filaAgregada.insertCell(3);
-    pagadoPor = filaAgregada.insertCell(4);
-    deudores = filaAgregada.insertCell(5);
-    deuda = filaAgregada.insertCell(6);
-    saldoAFavor = filaAgregada.insertCell(7);
-    estado = filaAgregada.insertCell(8);
+    let seleccionar = filaAgregada.insertCell(0);
+    let fecha = filaAgregada.insertCell(1);
+    let descripcion = filaAgregada.insertCell(2);	
+    let precio = filaAgregada.insertCell(3);
+    let pagadoPor = filaAgregada.insertCell(4);
+    let deudores = filaAgregada.insertCell(5);
+    let deuda = filaAgregada.insertCell(6);
+    let saldoAFavor = filaAgregada.insertCell(7);
+    let estado = filaAgregada.insertCell(8);
+    let gastoPorPersona = gasto.pagadoPorPersona;
     // Pongo los datos de la deuda en las celdas.
     estado.innerText = gasto.estado;
-    gastoPorPersona = gasto.pagadoPorPersona;
     fecha.innerText = gasto.fecha;
     descripcion.innerText = gasto.descripcion;
     precio.innerText = "$" + parseFloat(gasto.total).toFixed(2);
@@ -202,8 +184,6 @@ function agregarGastoATabla(gasto){
     botonEliminar.type = "checkbox";
     seleccionar.className ="td align-middle";
     seleccionar.append(botonEliminar);
-
-    //Agregar gastos al grupo correspondiente
 }
 
 function actualizarGrupo(indiceGrupo){
@@ -235,19 +215,12 @@ function saldarGastosSeleccionados(){
 }
 
 function obtenerDeudoresOrdenados(deuda){
-    let deudores = deuda.personas.sort((d1,d2)=> {  //ordeno el array alfabeticamente
-        if (d1.nombre >d2.nombre){
-            return 1;
-        }
-        if (d1.nombre <d2.nombre){
-            return -1;
-        }
-        return 0;    
-    })
+    let deudores = deuda.personas;
     let nombreDeudores = [];
     for (const nombre of deudores) {
         nombreDeudores.push(nombre.nombre);
     }
+    nombreDeudores.sort();
     return  nombreDeudores.join(", ");
 }
 
@@ -384,6 +357,7 @@ function eliminarGrupoStorage(indiceGrupo){
     }
 
 }
+
 function editarGrupo(){ 
     if(grupos.length != 0 ){
         let grupoAEditar = grupos[indiceGrupoSeleccionado];
@@ -406,7 +380,6 @@ function editarGrupo(){
         alert("No hay grupo para editar")
     }
 }
-
 
 function actualizarTarjetas(indiceGrupo){
     let deuda = document.getElementById("tarjetaDeuda");
@@ -515,8 +488,7 @@ function prepararOpcionesForms(){
     limpiarNodo(opcionesDeudor);
     let i = 0;
     //Agregar todos los integrantes del grupo
-    //Por ahora le paso el primer grupo, despues deberia chequear grupo actual.
-    for (const integrantes of grupos[indiceGrupoSeleccionado].integrantes) {                                      //Deberia verificar grupo y asignarselo
+    for (const integrantes of grupos[indiceGrupoSeleccionado].integrantes) {
         //Select
         let opcion = document.createElement("option");
         opcion.text = integrantes.nombre;
