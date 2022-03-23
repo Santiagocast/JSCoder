@@ -117,7 +117,7 @@ function limpiardetalleGrupo(){
 
 function validarFormGasto(){
    let monto = document.getElementById("monto").value;
-   monto == "" ? alert("Debe ingresar un monto") : gastoNuevoAñadir();
+   monto == "" ? Swal.fire({text: "Debe ingresar un monto", confirmButtonColor:"#0d6efd"}) : gastoNuevoAñadir();
 }
 
 function gastoNuevoAñadir(){
@@ -146,6 +146,7 @@ function gastoNuevoAñadir(){
     grupos[indiceGrupoSeleccionado].deudas.push(deuda);                                          
     actualizarGrupo(indiceGrupoSeleccionado);
     actualizarTarjetas(indiceGrupoSeleccionado); 
+    toasty("Gasto añadido", "#e0ffdd")
 }
 
 function noHayGrupo(){
@@ -196,6 +197,7 @@ function eliminarGastos(){
     }
     actualizarGrupo(indiceGrupoSeleccionado); //Actualizo en el storage el grupo
     actualizarTarjetas(indiceGrupoSeleccionado);
+    toasty("Gasto eliminado correctamente", "#e0ffdd");
 }
 
 function saldarGastosSeleccionados(){
@@ -208,6 +210,7 @@ function saldarGastosSeleccionados(){
     actualizarGrupo(indiceGrupoSeleccionado);
     actualizarTarjetas(indiceGrupoSeleccionado);
     recuperarGastosGrupo(indiceGrupoSeleccionado);
+    toasty("Deuda saldada correctamente", "#e0ffdd");
 }
 
 function obtenerDeudoresOrdenados(deuda){
@@ -253,20 +256,30 @@ function integrantesFinales(integrantesDOM){
 
 function agregarGrupo(){
     let nombre = document.getElementById("nombreGrupo").value;
-    let descripcion = document.getElementById("descripcionGrupo").value;
-    let integrantes = document.getElementById("integrantes");
-    let integrantesFinal = [] 
-    integrantesFinal = integrantesFinales(integrantes);
-    let grupo = new Grupo(nombre,descripcion,integrantesFinal);
-    document.getElementById("grupoNuevo").reset();
-    popup("#popupNuevoGrupo", "hide");
-    let key  = validarStorageGrupo(grupo);
-    localStorage.setItem(key,JSON.stringify(grupo));
-    grupos.push(grupo);
-    limpiarTabla();
-    actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
-    agregarEventListener(grupos.length);
-    indiceGrupoSeleccionado = grupos.length-1;   
+    if(nombre == ""){
+        Swal.fire({text: "Debe ingresar un nombre de grupo", confirmButtonColor:"#0d6efd"});
+    }else{
+        let descripcion = document.getElementById("descripcionGrupo").value;
+        let integrantes = document.getElementById("integrantes");
+        let integrantesFinal = [] 
+        integrantesFinal = integrantesFinales(integrantes);
+        let grupo = new Grupo(nombre,descripcion,integrantesFinal);
+        document.getElementById("grupoNuevo").reset();
+        popup("#popupNuevoGrupo", "hide");
+        let key  = validarStorageGrupo(grupo);
+        if(key){
+            localStorage.setItem(key,JSON.stringify(grupo));
+            grupos.push(grupo);
+            limpiarTabla();
+            actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
+            agregarEventListener(grupos.length);
+            indiceGrupoSeleccionado = grupos.length-1;   
+            toasty("Grupo guardado", "#e0ffdd");
+        }
+        else{
+            toasty("Ya existe un grupo con ese nombre", "#ff98a3")
+        }
+    }
 }
 
 function actualizarDetallesGrupo(grupo, indiceEnStorage){
@@ -350,6 +363,7 @@ function eliminarGrupoStorage(indiceGrupo){
     if(indiceGrupo == indiceGrupoSeleccionado){ 
         indiceGrupoSeleccionado = 0; //Me voy al primer grupo creado
         actualizarTodosLosGrupos(); //Actualizo las listas del costado y los grupos
+        toasty("Grupo eliminado correctamente","#e0ffdd");
     }
 
 }
@@ -372,9 +386,23 @@ function editarGrupo(){
         actualizarTodosLosGrupos();
         document.getElementById("grupoEditar").reset();
         popup("#popupEditarGrupo", "hide");
+        toasty("Grupo editado correctamente", "#e0ffdd");
+        
     }else{
-        alert("No hay grupo para editar")
+        Swal.fire({text: "No hay grupo para editar", confirmButtonColor:"#0d6efd"})
     }
+}
+
+function toasty(texto, color){
+    Toastify({
+        text: texto,
+        position : "center",
+        style: {
+            background: color, //"#e0ffdd, 
+            color: "black"
+          },
+        duration: 3000            
+        }).showToast();
 }
 
 function actualizarTarjetas(indiceGrupo){
@@ -421,7 +449,7 @@ function validarUserPrincipal(){
     let user;
     let usuario = document.getElementById("userPrincipal").value;
     if(usuario.localeCompare("") ==0){
-        alert("Ingrese nombres válido");
+        Swal.fire({text: "Ingrese nombres válido", confirmButtonColor:"#0d6efd"});
     }
     else{
         usuario = document.getElementById("userPrincipal").value;
@@ -445,7 +473,7 @@ function validarCheck(){
 
 function validarGasto(){
     if(noHayGrupo()){ //Si no hay grupos crear grupo
-        alert("Antes debe agregar un grupo")
+        Swal.fire({text: "Antes debe agregar un grupo", confirmButtonColor:"#0d6efd"})
         popup("#popupNuevoGrupo", "show")
     }else{
         prepararOpcionesForms(); 
@@ -470,7 +498,7 @@ function validarStorageGrupo(grupo){
     let key = "Grupo " + grupo.nombre;
     for (let i = 0; i< localStorage.length; i++){
         if("Grupo " + grupo.nombre == localStorage.key(i)){
-            key = "Grupo " + grupo.nombre +" (1)"
+            key = false;
         }
     }
     return key;
