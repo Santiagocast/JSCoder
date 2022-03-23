@@ -158,24 +158,24 @@ function agregarGastoATabla(gasto){
     let filaAgregada = tabla.insertRow();
     //inserto las celdas de las filas
     let seleccionar = filaAgregada.insertCell(0);
-    let fecha = filaAgregada.insertCell(1);
-    let descripcion = filaAgregada.insertCell(2);	
+    let date = filaAgregada.insertCell(1);
+    let descr = filaAgregada.insertCell(2);	
     let precio = filaAgregada.insertCell(3);
     let pagadoPor = filaAgregada.insertCell(4);
     let deudores = filaAgregada.insertCell(5);
     let deuda = filaAgregada.insertCell(6);
     let saldoAFavor = filaAgregada.insertCell(7);
-    let estado = filaAgregada.insertCell(8);
-    let gastoPorPersona = gasto.pagadoPorPersona;
+    let state = filaAgregada.insertCell(8);
+    let {pagadoPorPersona,pagador,personas,total,fecha,descripcion,estado} = gasto; //Desetructuro
     // Pongo los datos de la deuda en las celdas.
-    estado.innerText = gasto.estado;
-    fecha.innerText = gasto.fecha;
-    descripcion.innerText = gasto.descripcion;
-    precio.innerText = "$" + parseFloat(gasto.total).toFixed(2);
-    pagadoPor.innerText = gasto.pagador.nombre;
+    state.innerText = estado;
+    date.innerText = fecha;
+    descr.innerText = descripcion;
+    precio.innerText = "$" + parseFloat(total).toFixed(2);
+    pagadoPor.innerText = pagador.nombre;
     deudores.innerText =  obtenerDeudoresOrdenados(gasto);
-    deuda.innerText = "$" + gastoPorPersona;
-    saldoAFavor.innerText = "$" +  (gastoPorPersona * (gasto.personas.length)).toFixed(2); 
+    deuda.innerText = "$" + pagadoPorPersona;
+    saldoAFavor.innerText = "$" +  (pagadoPorPersona * (personas.length)).toFixed(2); 
     let botonEliminar = document.createElement("input");
     botonEliminar.type = "checkbox";
     seleccionar.className ="td align-middle";
