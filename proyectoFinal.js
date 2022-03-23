@@ -121,15 +121,11 @@ function validarFormGasto(){
 }
 
 function gastoNuevoAñadir(){
-    let fecha;
-    let monto;
-    let descripcion;
-    let pagador;
-    let deudores = [];
-    fecha = document.getElementById("fecha").value;
-    monto = parseFloat(document.getElementById("monto").value);
-    descripcion = document.getElementById("descripcion").value;
-    pagador = document.getElementById("pagador");
+    let fecha = document.getElementById("fecha").value;
+    let monto  = parseFloat(document.getElementById("monto").value);
+    let descripcion = document.getElementById("descripcion").value;
+    let pagador  = document.getElementById("pagador");
+    let deudores = []; 
     let opciones = document.getElementById("checkDeudores");
     let cantidadChecks = opciones.children.length;
     for(let i = 0; i<cantidadChecks; i++){
