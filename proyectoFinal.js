@@ -28,7 +28,6 @@ class Grupo {
         this.deudas = [];
     }
 }
-
 //Variables globales
 let usuarioPrincipal; 
 let grupos = [];
@@ -47,6 +46,8 @@ if (usuarioPrincipal == null){ //Debería ser la primera vez que abre
 //Eventos Usuario principal
 document.getElementById("añadirUserPrincipal").addEventListener("click", validarUserPrincipal);
 document.getElementById("usuarioNuevo").addEventListener("keypress", cancelarEnter);
+//Eventos para el boton de sesión
+document.getElementById("sesion").addEventListener("click", cerrarSesion);
 //Eventos para añadir los gastos.
 document.getElementById("agregarGasto").addEventListener("click", validarGasto);
 document.getElementById("cancelarGasto").addEventListener("click", () =>{popup("#exampleModal", "hide")});
@@ -78,7 +79,15 @@ document.getElementById("saldarGasto").addEventListener("click",saldarGastosSele
 function iniciar(){
     //Traigo los grupos
     usuarioPrincipal = JSON.parse(localStorage.getItem("0"));
+    let sesion = document.getElementById("sesion");
+    sesion.innerText = usuarioPrincipal.nombre + " (Cerrar sesion)";
+    sesion.style.visibility = "visible";
     actualizarTodosLosGrupos();
+}
+
+function cerrarSesion(){
+    localStorage.clear();
+    location.reload();
 }
 
 function actualizarTodosLosGrupos(){
