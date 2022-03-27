@@ -41,9 +41,6 @@ if (usuarioPrincipal == null){ //Debería ser la primera vez que abre
     popup("#popupUserPrincipal", "show");
 }else{ //puede haber grupos
     iniciar();
-    fetch("https://api.parser.name/?api_key=6059a5ae5296959e9beec3a0d1cc6e14&endpoint=generate")
-    .then( (res) => res.json())
-    .then( (data) => {console.log(data)})
 }
 
 //Eventos Usuario principal
@@ -73,6 +70,7 @@ document.getElementById("editGrupo").addEventListener("click", () =>{
 });
 document.getElementById("cancelarEditarGrupo").addEventListener("click", () =>{popup("#popupEditarGrupo", "hide")});
 document.getElementById("editarGrupo").addEventListener("click", editarGrupo);
+document.getElementById("randomGroup").addEventListener("click", crearGrupoAleatorio);
 //Eventos para eliminar Gastos
 document.getElementById("eliminarGastos").addEventListener("click",eliminarGastos);
 //Eventos para saldar Gastos
@@ -119,6 +117,23 @@ function limpiarTabla(){
     while(filas.hasChildNodes()){
         filas.removeChild(filas.lastChild)
     }
+}
+
+function crearGrupoAleatorio(){
+    let numero = Math.floor((Math.random() * (11-5))+5);
+    let personas = [];
+    personas.push(usuarioPrincipal);
+    console.log(numero);
+    fetch(`https://randomuser.me/api/?results=${numero}&nat=ES&inc=name`)
+    .then( (res) => res.json())
+    .then( (data) => {
+        for(let i = 0 ; i<numero ; i++){
+            let persona = new Persona(data.results[i].name.first,1);
+            personas.push(persona);
+        }
+        let grupo = new Grupo("Aleatorio " + (grupos.length+1),"Es un grupo aleatorio",personas)
+        guardarGrupo(grupo);
+    })
 }
 
 function limpiardetalleGrupo(){
@@ -266,6 +281,23 @@ function integrantesFinales(integrantesDOM){
     return integrantesFinales; 
 }
 
+function guardarGrupo(grupo){
+    let key  = validarStorageGrupo(grupo);
+    if(key){
+        localStorage.setItem(key,JSON.stringify(grupo));
+        grupos.push(grupo);
+        limpiarTabla();
+        actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
+        agregarEventListener(grupos.length);
+        indiceGrupoSeleccionado = grupos.length-1;   
+        toasty("Grupo guardado", "#e0ffdd");
+    }
+    else{
+        toasty("Ya existe un grupo con ese nombre", "#ff98a3")
+    }
+
+}
+
 function agregarGrupo(){
     let nombre = document.getElementById("nombreGrupo").value;
     if(nombre == ""){
@@ -278,19 +310,7 @@ function agregarGrupo(){
         let grupo = new Grupo(nombre,descripcion,integrantesFinal);
         document.getElementById("grupoNuevo").reset();
         popup("#popupNuevoGrupo", "hide");
-        let key  = validarStorageGrupo(grupo);
-        if(key){
-            localStorage.setItem(key,JSON.stringify(grupo));
-            grupos.push(grupo);
-            limpiarTabla();
-            actualizarDetallesGrupo(grupos[grupos.length-1],grupos.length);
-            agregarEventListener(grupos.length);
-            indiceGrupoSeleccionado = grupos.length-1;   
-            toasty("Grupo guardado", "#e0ffdd");
-        }
-        else{
-            toasty("Ya existe un grupo con ese nombre", "#ff98a3")
-        }
+        guardarGrupo(grupo);
     }
 }
 
