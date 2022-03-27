@@ -41,6 +41,9 @@ if (usuarioPrincipal == null){ //Debería ser la primera vez que abre
     popup("#popupUserPrincipal", "show");
 }else{ //puede haber grupos
     iniciar();
+    fetch("https://api.parser.name/?api_key=6059a5ae5296959e9beec3a0d1cc6e14&endpoint=generate")
+    .then( (res) => res.json())
+    .then( (data) => {console.log(data)})
 }
 
 //Eventos Usuario principal
