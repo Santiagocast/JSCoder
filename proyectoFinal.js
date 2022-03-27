@@ -131,9 +131,20 @@ function crearGrupoAleatorio(){
             let persona = new Persona(data.results[i].name.first,1);
             personas.push(persona);
         }
-        let grupo = new Grupo("Aleatorio " + (grupos.length+1),"Es un grupo aleatorio",personas)
+        let aleatId = verificarNumeroAleatorio();
+        let grupo = new Grupo("Aleatorio " + (aleatId),"Es un grupo aleatorio",personas)
         guardarGrupo(grupo);
     })
+}
+
+function verificarNumeroAleatorio(){
+    let contador = 0;
+    for (let i = 0; i< localStorage.length; i++){
+        if(/^Grupo Aleatorio/.test(localStorage.key(i))){
+            contador ++;
+        }
+    }
+    return contador;
 }
 
 function limpiardetalleGrupo(){
